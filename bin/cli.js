@@ -28,7 +28,7 @@ program
 
       if (!targetComponent) {
         console.log(kleur.yellow('Por favor, especifique um componente para adicionar.'));
-        console.log(kleur.cyan('Exemplo: npx defaultDesignSystem add Button'));
+        console.log(kleur.cyan('Exemplo: npx defaultdesignsystem add Button'));
         console.log(kleur.gray('Componentes disponiveis:'));
         availableComponents.forEach((c) => console.log(` - ${c}`));
         process.exit(1);
@@ -174,12 +174,12 @@ program
       await fs.copy(themeSource, themeTarget);
       console.log(kleur.green(`✔ Tema "${theme}" adicionado em src/styles/theme-${theme}.css.`));
 
-      // Copy tailwind-preset.js
+      // Copy tailwind-preset.cjs
       const presetSource = path.join(TEMPLATES_DIR, 'tailwind-preset.js');
-      const presetTarget = path.join(process.cwd(), 'tailwind-preset.js');
+      const presetTarget = path.join(process.cwd(), 'tailwind-preset.cjs');
       if (!(await fs.pathExists(presetTarget))) {
         await fs.copy(presetSource, presetTarget);
-        console.log(kleur.green(`✔ Preset Tailwind tailwind-preset.js adicionado.`));
+        console.log(kleur.green(`✔ Preset Tailwind tailwind-preset.cjs adicionado.`));
       }
 
       console.log(kleur.green(`✔ Diretorios e utilitarios criados com sucesso!`));
