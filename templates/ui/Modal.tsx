@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef, useId, useCallback } from 'react';
 import { cn } from '../utils/cn';
 
 export interface ModalProps {
@@ -14,6 +14,9 @@ export interface ModalProps {
   className?: string;
 }
 
+const FOCUSABLE_SELECTOR =
+  'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])';
+
 export const Modal: React.FC<ModalProps> = ({
   open,
   onClose,
@@ -26,32 +29,88 @@ export const Modal: React.FC<ModalProps> = ({
   children,
   className,
 }) => {
-  React.useEffect(() => {
-    if (!closeOnEsc) return;
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && onClose) {
+  const overlayRef = useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
+  const previousFocusRef = useRef<HTMLElement | null>(null);
+  const titleId = useId();
+  const descId = useId();
+
+  const handleKeyDown = useCallback(
+    (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && closeOnEsc && onClose) {
         onClose();
+        return;
       }
+
+      if (e.key === 'Tab' && contentRef.current) {
+        const focusable = contentRef.current.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR);
+        if (focusable.length === 0) return;
+
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+
+        if (e.shiftKey) {
+          if (document.activeElement === first) {
+            e.preventDefault();
+            last.focus();
+          }
+        } else {
+          if (document.activeElement === last) {
+            e.preventDefault();
+            first.focus();
+          }
+        }
+      }
+    },
+    [closeOnEsc, onClose],
+  );
+
+  useEffect(() => {
+    if (!open) return;
+
+    previousFocusRef.current = document.activeElement as HTMLElement;
+
+    document.body.style.overflow = 'hidden';
+
+    const timer = setTimeout(() => {
+      if (contentRef.current) {
+        const firstFocusable = contentRef.current.querySelector<HTMLElement>(FOCUSABLE_SELECTOR);
+        firstFocusable?.focus();
+      }
+    }, 0);
+
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      clearTimeout(timer);
+      document.body.style.overflow = '';
+      window.removeEventListener('keydown', handleKeyDown);
+      previousFocusRef.current?.focus();
     };
-    if (open) {
-      window.addEventListener('keydown', handleKeyDown);
-    }
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [open, closeOnEsc, onClose]);
+  }, [open, handleKeyDown]);
 
   if (!open) return null;
 
   return (
     <div
+      ref={overlayRef}
       className={cn(
-        "fixed inset-0 z-50 bg-black/50 backdrop-blur-sm",
-        variant === 'centered' ? 'flex items-center justify-center' : 'p-4'
+        'fixed inset-0 z-50 bg-overlay/50 backdrop-blur-sm',
+        variant === 'centered' ? 'flex items-center justify-center' : 'p-4',
       )}
       onClick={closeOnOverlayClick ? onClose : undefined}
+      onKeyDown={(e) => {
+        if (e.key === 'Escape' && closeOnEsc && onClose) onClose();
+      }}
     >
       <div
+        ref={contentRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={title ? titleId : undefined}
+        aria-describedby={description ? descId : undefined}
         className={cn(
-          "bg-white rounded-lg shadow-lg overflow-hidden",
+          'bg-background rounded-lg shadow-lg overflow-hidden',
           {
             'w-full max-w-sm': size === 'sm',
             'w-full max-w-md': size === 'md',
@@ -60,21 +119,25 @@ export const Modal: React.FC<ModalProps> = ({
             'w-full h-full max-w-none rounded-none': size === 'full' || variant === 'fullscreen',
             'mx-auto mt-10': variant === 'default' && size !== 'full',
           },
-          className
+          className,
         )}
-        onClick={e => e.stopPropagation()}
-        role="dialog"
-        aria-modal="true"
+        onClick={(e) => e.stopPropagation()}
       >
         {(title || description) && (
-          <div className="px-6 py-4 border-b">
-            {title && <h2 className="text-lg font-semibold">{title}</h2>}
-            {description && <p className="text-sm text-gray-500 mt-1">{description}</p>}
+          <div className="px-6 py-4 border-b border-border">
+            {title && (
+              <h2 id={titleId} className="text-lg font-semibold text-foreground">
+                {title}
+              </h2>
+            )}
+            {description && (
+              <p id={descId} className="text-sm text-muted-foreground mt-1">
+                {description}
+              </p>
+            )}
           </div>
         )}
-        <div className="px-6 py-4">
-          {children}
-        </div>
+        <div className="px-6 py-4">{children}</div>
       </div>
     </div>
   );

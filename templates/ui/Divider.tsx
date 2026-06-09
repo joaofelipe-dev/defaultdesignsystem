@@ -14,7 +14,7 @@ export const Divider = React.forwardRef<HTMLDivElement | HTMLHRElement, DividerP
         <div
           ref={ref as React.ForwardedRef<HTMLDivElement>}
           className={cn(
-            "inline-block w-px h-auto align-middle",
+            'inline-block w-px h-auto align-middle',
             {
               'bg-border': variant === 'solid',
               'border-l border-dashed': variant === 'dashed',
@@ -22,7 +22,7 @@ export const Divider = React.forwardRef<HTMLDivElement | HTMLHRElement, DividerP
               'mx-4': spacing === 'md',
               'mx-6': spacing === 'lg',
             },
-            className
+            className,
           )}
           {...(props as React.HTMLAttributes<HTMLDivElement>)}
         />
@@ -33,7 +33,7 @@ export const Divider = React.forwardRef<HTMLDivElement | HTMLHRElement, DividerP
       <hr
         ref={ref as React.ForwardedRef<HTMLHRElement>}
         className={cn(
-          "w-full border-t",
+          'w-full border-t',
           {
             'border-solid': variant === 'solid',
             'border-dashed': variant === 'dashed',
@@ -41,11 +41,11 @@ export const Divider = React.forwardRef<HTMLDivElement | HTMLHRElement, DividerP
             'my-4': spacing === 'md',
             'my-6': spacing === 'lg',
           },
-          className
+          className,
         )}
         {...(props as React.HTMLAttributes<HTMLHRElement>)}
       />
     );
-  }
+  },
 );
 Divider.displayName = 'Divider';

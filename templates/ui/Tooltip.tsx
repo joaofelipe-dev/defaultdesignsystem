@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useId } from 'react';
 import { cn } from '../utils/cn';
 
 export interface TooltipProps {
@@ -22,6 +22,8 @@ export const Tooltip: React.FC<TooltipProps> = ({
 }) => {
   const [visible, setVisible] = useState(false);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const triggerRef = useRef<HTMLDivElement>(null);
+  const uid = useId();
 
   const clearTooltipTimeout = () => {
     if (timeoutRef.current !== null) {
@@ -37,7 +39,6 @@ export const Tooltip: React.FC<TooltipProps> = ({
   };
 
   const hide = () => {
-    if (disabled) return;
     clearTooltipTimeout();
     setVisible(false);
   };
@@ -48,22 +49,28 @@ export const Tooltip: React.FC<TooltipProps> = ({
 
   return (
     <div
-      className={cn("relative inline-block", className)}
+      ref={triggerRef}
+      className={cn('relative inline-block', className)}
       onMouseEnter={show}
       onMouseLeave={hide}
       onFocus={show}
       onBlur={hide}
+      aria-describedby={visible ? `${uid}-tooltip` : undefined}
     >
       {children}
       {visible && (
-        <div className={cn("absolute z-50 px-2 py-1 text-sm rounded shadow-md whitespace-nowrap", {
-          'bg-gray-900 text-white': variant === 'dark',
-          'bg-white text-gray-900 border border-gray-200': variant === 'light',
-          'bottom-full left-1/2 -translate-x-1/2 mb-2': position === 'top',
-          'top-full left-1/2 -translate-x-1/2 mt-2': position === 'bottom',
-          'right-full top-1/2 -translate-y-1/2 mr-2': position === 'left',
-          'left-full top-1/2 -translate-y-1/2 ml-2': position === 'right',
-        })}>
+        <div
+          id={`${uid}-tooltip`}
+          role="tooltip"
+          className={cn('absolute z-50 px-2 py-1 text-sm rounded shadow-md whitespace-nowrap', {
+            'bg-tooltip text-tooltip-foreground': variant === 'dark',
+            'bg-tooltip-light text-tooltip-light-foreground border border-tooltip-light-border': variant === 'light',
+            'bottom-full left-1/2 -translate-x-1/2 mb-2': position === 'top',
+            'top-full left-1/2 -translate-x-1/2 mt-2': position === 'bottom',
+            'right-full top-1/2 -translate-y-1/2 mr-2': position === 'left',
+            'left-full top-1/2 -translate-y-1/2 ml-2': position === 'right',
+          })}
+        >
           {content}
         </div>
       )}
