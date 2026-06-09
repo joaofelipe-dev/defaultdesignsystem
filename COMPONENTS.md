@@ -24,7 +24,6 @@ Um menu dropdown clássico.
 - **`size`**: Tamanho do componente (`"sm" | "md" | "lg"`)
 - **`status`**: Indicador visual de estado (`"error" | "success" | "default"`)
 - **`multiple`** (`boolean`): Se `true`, permite selecionar múltiplas opções.
-- **`searchable` / `clearable`** (`boolean`): Indicadores de comportamento para limpezas e busca.
 
 ---
 
@@ -181,6 +180,50 @@ Botão interativo com diversas variações visuais.
 - **`fullWidth`** (`boolean`): Se `true`, expande o botão para ocupar 100% da largura.
 
 ---
+
+## 📖 Storybook
+
+Todas as stories estão em `templates/stories/` e podem ser visualizadas com:
+
+```bash
+npm run storybook    # Dev server em http://localhost:6006
+npm run build-storybook  # Build estático em storybook-static/
+```
+
+Cada componente possui stories demonstrando variantes, tamanhos, estados e interatividade.
+
+---
+
+## 🎨 Theming com CSS Variables
+
+O design system utiliza **CSS Variables** para theming completo. As variáveis são definidas em `src/styles/globals.css` e mapeadas via `tailwind-preset.js`.
+
+### Cores disponíveis
+
+| Variável | Uso |
+|---|---|
+| `--background` / `--foreground` | Fundo e texto principal |
+| `--primary` / `--primary-foreground` | Cor primária (botões, links) |
+| `--secondary` / `--secondary-foreground` | Cor secundária |
+| `--destructive` / `--destructive-foreground` | Ações destrutivas (erro) |
+| `--success` / `--success-foreground` | Estados de sucesso |
+| `--warning` / `--warning-foreground` | Estados de aviso |
+| `--muted` / `--muted-foreground` | Elementos atenuados |
+| `--accent` / `--accent-foreground` | Destaques (hover, ghost) |
+| `--border` / `--input` | Bordas e inputs |
+| `--ring` | Foco (focus ring) |
+
+### Dark mode
+
+Ative adicionando a classe `.dark` no elemento `<html>`. O tailwind-preset.js já suporta:
+
+```css
+/* Nos seus styles globais */
+@layer base {
+  :root { /* cores do tema claro */ }
+  .dark  { /* cores do tema escuro */ }
+}
+```
 
 ### Dica de ouro
 Você sempre pode passar uma string extra via `className` para qualquer componente. Todos eles usam `cn(..., className)`, então você consegue facilmente sobrescrever cores, margens, display com facilidade utilizando as classes do TailwindCSS de onde você importá-lo!
