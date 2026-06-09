@@ -1,0 +1,13 @@
+{
+  "$schema": "https://raw.githubusercontent.com/joaofelipe-dev/defaultdesignsystem/main/components.schema.json",
+  "style": "default",
+  "tailwind": {
+    "config": "tailwind.config.ts",
+    "css": "src/styles/globals.css",
+    "cssVariables": true
+  },
+  "aliases": {
+    "components": "@/components/ui",
+    "utils": "@/components/utils"
+  }
+}
