@@ -22,7 +22,9 @@ program
     try {
       const componentsDir = path.join(TEMPLATES_DIR, 'ui');
       const components = await fs.readdir(componentsDir);
-      const availableComponents = components.map((c) => c.replace('.tsx', ''));
+      const availableComponents = components
+        .filter((c) => c.endsWith('.tsx') && !c.endsWith('.test.tsx'))
+        .map((c) => c.replace('.tsx', ''));
 
       let targetComponent = componentName;
 

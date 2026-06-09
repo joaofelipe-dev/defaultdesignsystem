@@ -1,39 +1,129 @@
-# defaultDesignSystem 🧱
+# defaultDesignSystem
 
-**defaultDesignSystem** é uma biblioteca de componentes React estilizada com Tailwind CSS, focada em produtividade e total controle do código.
+Biblioteca de componentes React com Tailwind CSS, instalada via CLI — o código é copiado direto para seu projeto, dando 100% de controle.
 
-Em vez de ser instalada como uma dependência obscura dentro da pasta `node_modules`, este repositório funciona como uma ferramenta CLI (Command Line Interface). Ao executar os comandos, os componentes que você escolher (ou a suíte inteira) são "injetados" diretamente dentro da pasta do seu projeto (em `src/components/ui/`), dando a você **100% de controle para modificar, ajustar e estender** o código como preferir.
+Todos os 17 componentes usam o utilitário `cn` (clsx + tailwind-merge).
 
-Todos os 17 componentes já vêm prontos, acessíveis e desenhados seguindo as melhores práticas do mercado, além de fazerem uso inteligente do utilitário `cn` (que combina `clsx` e `tailwind-merge` para evitar conflitos de classes).
-
-Para ver a lista detalhada de componentes e suas propriedades, consulte o nosso [COMPONENTS.md](./COMPONENTS.md).
+Para detalhes de cada componente, veja [COMPONENTS.md](./COMPONENTS.md).
 
 ---
 
-## 🚀 Como instalar e usar
+## Instalação
 
-Você não precisa baixar o repositório inteiro ou se preocupar com `npm install`. Basta usar o `npx` apontando diretamente para o link do repositório no GitHub de dentro do seu projeto React ou Next.js:
-
-### 1. Inicialize o Design System no seu projeto
-O comando abaixo cria as pastas necessárias (`src/components/ui`), adiciona o utilitário `cn.ts` e instala as dependências auxiliares requeridas pelo Tailwind.
+Dentro do seu projeto React/Next.js:
 
 ```bash
-npx git+https://github.com/joaofelipe-dev/defaultdesignsystem.git init
+npm install github:joaofelipe-dev/defaultdesignsystem
+npx defaultdesignsystem init
 ```
 
-### 2. Adicione componentes
-Com a estrutura pronta, você pode ejetar componentes individuais para dentro do seu projeto:
+O `init` detecta automaticamente:
+- **Framework**: Next.js (copia para `src/app/`) ou Vite (copia para `src/styles/`)
+- **Tailwind v3 vs v4**: v4 gera `globals.css` com `@import "tailwindcss"` + `@theme` (sem preset extra)
+
+Por padrão o tema **default** (zinc) é aplicado. Para escolher outro tema já no init:
 
 ```bash
-npx git+https://github.com/joaofelipe-dev/defaultdesignsystem.git add Button
+npx defaultdesignsystem init --theme green
 ```
-*(No exemplo acima, o componente Button será copiado para o seu projeto em `src/components/ui/Button.tsx`)*
 
-### 3. Quer tudo de uma vez?
-Se você for usar a biblioteca inteira, você pode baixar todos os 17 componentes de uma só vez usando o parâmetro `all`:
+Temas disponíveis: `default`, `green`, `violet`, `orange`, `neutral`
+
+### Pós-instalação
+
+Importe os estilos no entry point do seu projeto.
+
+**Next.js** (`src/app/layout.tsx`):
+```ts
+import "./globals.css"
+import "./theme-green.css"
+```
+
+**Vite** (`src/main.tsx`):
+```ts
+import "./styles/globals.css"
+import "./styles/theme-green.css"
+```
+
+### Tailwind v3 — config extra
+
+Se seu projeto usa Tailwind v3, crie um `postcss.config.cjs` e `tailwind.config.cjs` no raiz:
+
+<details>
+<summary>postcss.config.cjs</summary>
+
+```js
+module.exports = {
+  plugins: {
+    tailwindcss: {},
+    autoprefixer: {},
+  },
+}
+```
+</details>
+
+<details>
+<summary>tailwind.config.cjs</summary>
+
+```js
+const { defaultDesignSystem } = require("defaultdesignsystem/tailwind-preset.cjs")
+
+/** @type {import('tailwindcss').Config} */
+module.exports = {
+  presets: [defaultDesignSystem],
+  content: ["./src/**/*.{ts,tsx}"],
+}
+```
+</details>
+
+**Tailwind v4 não precisa de config extra** — o `@theme` no `globals.css` resolve automaticamente.
+
+---
+
+## Adicionar componentes
 
 ```bash
-npx git+https://github.com/joaofelipe-dev/defaultdesignsystem.git add all
+npx defaultdesignsystem add Button
+npx defaultdesignsystem add all     # todos os 17 componentes
 ```
 
-E pronto! É só importar o componente gerado no seu código e começar a construir.
+Os componentes são copiados para `src/components/ui/`.
+
+---
+
+## Reset styles (opcional)
+
+Se quiser reset CSS global além do Tailwind, crie um `src/styles/reset.css`:
+
+```css
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+```
+
+Importe antes do globals.css no entry point.
+
+---
+
+## Temas personalizados
+
+Para criar seu próprio tema, crie um arquivo CSS com as variáveis que deseja sobrescrever:
+
+```css
+/* src/styles/theme-custom.css */
+:root {
+  --primary: 220 80% 50%;
+  --primary-foreground: 0 0% 100%;
+}
+
+.dark {
+  --primary: 220 70% 60%;
+  --primary-foreground: 220 80% 10%;
+}
+```
+
+E importe após o `globals.css`.
