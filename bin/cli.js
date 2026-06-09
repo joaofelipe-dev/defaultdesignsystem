@@ -146,7 +146,13 @@ program
 
       const targetComponentsDir = path.join(process.cwd(), 'src/components/ui');
       const targetUtilsDir = path.join(process.cwd(), 'src/components/utils');
-      const targetStylesDir = path.join(process.cwd(), 'src/styles');
+
+      // Detect Next.js App Router
+      const isNext = ['next.config.js', 'next.config.ts', 'next.config.mjs', 'next.config.cjs']
+        .some((f) => fs.existsSync(path.join(process.cwd(), f)));
+      const targetStylesDir = isNext
+        ? path.join(process.cwd(), 'src/app')
+        : path.join(process.cwd(), 'src/styles');
 
       await fs.ensureDir(targetComponentsDir);
       await fs.ensureDir(targetUtilsDir);
@@ -162,17 +168,19 @@ program
 
       // Copy globals.css
       const cssSource = path.join(TEMPLATES_DIR, 'styles/globals.css');
-      const cssTarget = path.join(targetStylesDir, 'globals.css');
+      const cssFilename = isNext ? 'globals.css' : 'globals.css';
+      const cssTarget = path.join(targetStylesDir, cssFilename);
       if (!(await fs.pathExists(cssTarget))) {
         await fs.copy(cssSource, cssTarget);
-        console.log(kleur.green(`✔ Tema base src/styles/globals.css adicionado.`));
+        console.log(kleur.green(`✔ Tema base ${isNext ? 'src/app' : 'src/styles'}/globals.css adicionado.`));
       }
 
       // Copy theme preset
       const themeSource = path.join(TEMPLATES_DIR, 'styles/themes', `${theme}.css`);
-      const themeTarget = path.join(targetStylesDir, `theme-${theme}.css`);
+      const themeFilename = isNext ? `theme-${theme}.css` : `theme-${theme}.css`;
+      const themeTarget = path.join(targetStylesDir, themeFilename);
       await fs.copy(themeSource, themeTarget);
-      console.log(kleur.green(`✔ Tema "${theme}" adicionado em src/styles/theme-${theme}.css.`));
+      console.log(kleur.green(`✔ Tema "${theme}" adicionado em ${isNext ? 'src/app' : 'src/styles'}/theme-${theme}.css.`));
 
       // Copy tailwind-preset.cjs
       const presetSource = path.join(TEMPLATES_DIR, 'tailwind-preset.js');
@@ -193,6 +201,18 @@ program
           kleur.yellow(`Aviso: Nao foi possivel instalar as dependencias automaticamente.`),
         );
         console.log(kleur.cyan(`Por favor, execute manualmente: npm install clsx tailwind-merge`));
+      }
+
+      // Print import instructions
+      console.log('');
+      if (isNext) {
+        console.log(kleur.cyan('📘 Para Next.js App Router, importe os estilos em src/app/layout.tsx:'));
+        console.log(kleur.white('   import "./globals.css"'));
+        console.log(kleur.white('   import "./theme-default.css"'));
+      } else {
+        console.log(kleur.cyan('📘 Para Vite, importe os estilos em src/main.tsx:'));
+        console.log(kleur.white('   import "./styles/globals.css"'));
+        console.log(kleur.white('   import "./styles/theme-default.css"'));
       }
     } catch (err) {
       console.error(kleur.red('Erro na inicializacao:'), err);
