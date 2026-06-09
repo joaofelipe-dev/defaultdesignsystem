@@ -22,7 +22,7 @@ program
     try {
       const componentsDir = path.join(TEMPLATES_DIR, 'ui');
       const components = await fs.readdir(componentsDir);
-      const availableComponents = components.map(c => c.replace('.tsx', ''));
+      const availableComponents = components.map((c) => c.replace('.tsx', ''));
 
       let targetComponent = componentName;
 
@@ -30,19 +30,19 @@ program
         console.log(kleur.yellow('Por favor, especifique um componente para adicionar.'));
         console.log(kleur.cyan('Exemplo: npx defaultDesignSystem add Button'));
         console.log(kleur.gray('Componentes disponiveis:'));
-        availableComponents.forEach(c => console.log(` - ${c}`));
+        availableComponents.forEach((c) => console.log(` - ${c}`));
         process.exit(1);
       }
 
       // Handle 'all' case
       if (targetComponent.toLowerCase() === 'all') {
         const targetDir = path.join(process.cwd(), 'src/components/ui');
-        
+
         // Ensure utils/cn.ts exists first
         const utilsSource = path.join(TEMPLATES_DIR, 'utils/cn.ts');
         const utilsTargetDir = path.join(process.cwd(), 'src/components/utils');
         const utilsTarget = path.join(utilsTargetDir, 'cn.ts');
-        
+
         await fs.ensureDir(targetDir);
         await fs.ensureDir(utilsTargetDir);
 
@@ -52,14 +52,14 @@ program
         }
 
         console.log(kleur.cyan(`Instalando todos os ${availableComponents.length} componentes...`));
-        
+
         for (const comp of availableComponents) {
           const srcFile = path.join(componentsDir, `${comp}.tsx`);
           const tgtFile = path.join(targetDir, `${comp}.tsx`);
           await fs.copy(srcFile, tgtFile);
           console.log(kleur.gray(` - ${comp} copiado.`));
         }
-        
+
         console.log(kleur.green(`✔ Todos os componentes adicionados com sucesso!`));
         return;
       }
@@ -85,7 +85,11 @@ program
 
       if (!(await fs.pathExists(utilsTarget))) {
         await fs.copy(utilsSource, utilsTarget);
-        console.log(kleur.green(`✔ Utilitario src/components/utils/cn.ts adicionado (necessario instalar clsx e tailwind-merge).`));
+        console.log(
+          kleur.green(
+            `✔ Utilitario src/components/utils/cn.ts adicionado (necessario instalar clsx e tailwind-merge).`,
+          ),
+        );
       }
 
       if (await fs.pathExists(targetFile)) {
@@ -93,8 +97,16 @@ program
       }
 
       await fs.copy(sourceFile, targetFile);
-      console.log(kleur.green(`✔ Componente ${name} adicionado com sucesso em src/components/ui/${name}.tsx!`));
-      console.log(kleur.cyan(`Certifique-se de ter as dependencias "clsx" e "tailwind-merge" instaladas no seu projeto.`));
+      console.log(
+        kleur.green(
+          `✔ Componente ${name} adicionado com sucesso em src/components/ui/${name}.tsx!`,
+        ),
+      );
+      console.log(
+        kleur.cyan(
+          `Certifique-se de ter as dependencias "clsx" e "tailwind-merge" instaladas no seu projeto.`,
+        ),
+      );
     } catch (error) {
       console.error(kleur.red('Erro ao adicionar componente:'), error);
     }
@@ -103,29 +115,86 @@ program
 program
   .command('init')
   .description('Inicializa a pasta de componentes no projeto')
-  .action(async () => {
+  .option('-t, --theme <name>', 'Tema a ser utilizado (default, green, violet, orange, neutral)')
+  .action(async (options) => {
     try {
-      const targetDir = path.join(process.cwd(), 'src/components/ui');
-      await fs.ensureDir(targetDir);
-      
+      const prompts = require('prompts');
+
+      let theme = options.theme;
+
+      if (!theme) {
+        const response = await prompts({
+          type: 'select',
+          name: 'theme',
+          message: 'Escolha um tema para o seu projeto:',
+          choices: [
+            { title: 'Default (Azul)', value: 'default' },
+            { title: 'Green (Verde)', value: 'green' },
+            { title: 'Violet (Roxo)', value: 'violet' },
+            { title: 'Orange (Laranja)', value: 'orange' },
+            { title: 'Neutral (Cinza)', value: 'neutral' },
+          ],
+        });
+        theme = response.theme;
+      }
+
+      const validThemes = ['default', 'green', 'violet', 'orange', 'neutral'];
+      if (!validThemes.includes(theme)) {
+        console.error(kleur.red(`Tema "${theme}" invalido. Use: ${validThemes.join(', ')}`));
+        process.exit(1);
+      }
+
+      const targetComponentsDir = path.join(process.cwd(), 'src/components/ui');
+      const targetUtilsDir = path.join(process.cwd(), 'src/components/utils');
+      const targetStylesDir = path.join(process.cwd(), 'src/styles');
+
+      await fs.ensureDir(targetComponentsDir);
+      await fs.ensureDir(targetUtilsDir);
+      await fs.ensureDir(targetStylesDir);
+
+      // Copy cn.ts utility
       const utilsSource = path.join(TEMPLATES_DIR, 'utils/cn.ts');
-      const utilsTargetDir = path.join(process.cwd(), 'src/components/utils');
-      const utilsTarget = path.join(utilsTargetDir, 'cn.ts');
-      
-      await fs.ensureDir(utilsTargetDir);
-      await fs.copy(utilsSource, utilsTarget);
-      
-      console.log(kleur.green(`✔ Diretorios e utilitarios (src/utils/cn.ts) criados com sucesso!`));
+      const utilsTarget = path.join(targetUtilsDir, 'cn.ts');
+      if (!(await fs.pathExists(utilsTarget))) {
+        await fs.copy(utilsSource, utilsTarget);
+        console.log(kleur.green(`✔ Utilitario src/components/utils/cn.ts adicionado.`));
+      }
+
+      // Copy globals.css
+      const cssSource = path.join(TEMPLATES_DIR, 'styles/globals.css');
+      const cssTarget = path.join(targetStylesDir, 'globals.css');
+      if (!(await fs.pathExists(cssTarget))) {
+        await fs.copy(cssSource, cssTarget);
+        console.log(kleur.green(`✔ Tema base src/styles/globals.css adicionado.`));
+      }
+
+      // Copy theme preset
+      const themeSource = path.join(TEMPLATES_DIR, 'styles/themes', `${theme}.css`);
+      const themeTarget = path.join(targetStylesDir, `theme-${theme}.css`);
+      await fs.copy(themeSource, themeTarget);
+      console.log(kleur.green(`✔ Tema "${theme}" adicionado em src/styles/theme-${theme}.css.`));
+
+      // Copy tailwind-preset.js
+      const presetSource = path.join(TEMPLATES_DIR, 'tailwind-preset.js');
+      const presetTarget = path.join(process.cwd(), 'tailwind-preset.js');
+      if (!(await fs.pathExists(presetTarget))) {
+        await fs.copy(presetSource, presetTarget);
+        console.log(kleur.green(`✔ Preset Tailwind tailwind-preset.js adicionado.`));
+      }
+
+      console.log(kleur.green(`✔ Diretorios e utilitarios criados com sucesso!`));
       console.log(kleur.cyan(`Instalando dependencias necessarias (clsx, tailwind-merge)...`));
-      
+
       try {
         execSync('npm install clsx tailwind-merge', { stdio: 'inherit' });
         console.log(kleur.green(`✔ Dependencias instaladas com sucesso!`));
-      } catch (installErr) {
-        console.error(kleur.yellow(`Aviso: Nao foi possivel instalar as dependencias automaticamente.`));
+      } catch {
+        console.error(
+          kleur.yellow(`Aviso: Nao foi possivel instalar as dependencias automaticamente.`),
+        );
         console.log(kleur.cyan(`Por favor, execute manualmente: npm install clsx tailwind-merge`));
       }
-    } catch(err) {
+    } catch (err) {
       console.error(kleur.red('Erro na inicializacao:'), err);
     }
   });
