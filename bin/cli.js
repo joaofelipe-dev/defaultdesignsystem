@@ -147,9 +147,18 @@ program
       const targetComponentsDir = path.join(process.cwd(), 'src/components/ui');
       const targetUtilsDir = path.join(process.cwd(), 'src/components/utils');
 
-      // Detect Next.js App Router
+      // Detect framework and Tailwind version
       const isNext = ['next.config.js', 'next.config.ts', 'next.config.mjs', 'next.config.cjs']
         .some((f) => fs.existsSync(path.join(process.cwd(), f)));
+
+      const pkgPath = path.join(process.cwd(), 'package.json');
+      let isTailwindV4 = false;
+      if (fs.existsSync(pkgPath)) {
+        const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf-8'));
+        const deps = { ...pkg.dependencies, ...pkg.devDependencies };
+        isTailwindV4 = deps['@tailwindcss/postcss'] !== undefined;
+      }
+
       const targetStylesDir = isNext
         ? path.join(process.cwd(), 'src/app')
         : path.join(process.cwd(), 'src/styles');
@@ -166,10 +175,10 @@ program
         console.log(kleur.green(`✔ Utilitario src/components/utils/cn.ts adicionado.`));
       }
 
-      // Copy globals.css
-      const cssSource = path.join(TEMPLATES_DIR, 'styles/globals.css');
-      const cssFilename = isNext ? 'globals.css' : 'globals.css';
-      const cssTarget = path.join(targetStylesDir, cssFilename);
+      // Copy globals.css (v3 or v4)
+      const cssSourceName = isTailwindV4 ? 'globals-v4.css' : 'globals.css';
+      const cssSource = path.join(TEMPLATES_DIR, 'styles', cssSourceName);
+      const cssTarget = path.join(targetStylesDir, 'globals.css');
       if (!(await fs.pathExists(cssTarget))) {
         await fs.copy(cssSource, cssTarget);
         console.log(kleur.green(`✔ Tema base ${isNext ? 'src/app' : 'src/styles'}/globals.css adicionado.`));
@@ -182,12 +191,14 @@ program
       await fs.copy(themeSource, themeTarget);
       console.log(kleur.green(`✔ Tema "${theme}" adicionado em ${isNext ? 'src/app' : 'src/styles'}/theme-${theme}.css.`));
 
-      // Copy tailwind-preset.cjs
-      const presetSource = path.join(TEMPLATES_DIR, 'tailwind-preset.js');
-      const presetTarget = path.join(process.cwd(), 'tailwind-preset.cjs');
-      if (!(await fs.pathExists(presetTarget))) {
-        await fs.copy(presetSource, presetTarget);
-        console.log(kleur.green(`✔ Preset Tailwind tailwind-preset.cjs adicionado.`));
+      // Copy tailwind-preset.cjs (v3 only)
+      if (!isTailwindV4) {
+        const presetSource = path.join(TEMPLATES_DIR, 'tailwind-preset.js');
+        const presetTarget = path.join(process.cwd(), 'tailwind-preset.cjs');
+        if (!(await fs.pathExists(presetTarget))) {
+          await fs.copy(presetSource, presetTarget);
+          console.log(kleur.green(`✔ Preset Tailwind tailwind-preset.cjs adicionado.`));
+        }
       }
 
       console.log(kleur.green(`✔ Diretorios e utilitarios criados com sucesso!`));
@@ -205,14 +216,26 @@ program
 
       // Print import instructions
       console.log('');
+      const relativePath = isNext ? '' : 'styles/';
       if (isNext) {
-        console.log(kleur.cyan('📘 Para Next.js App Router, importe os estilos em src/app/layout.tsx:'));
-        console.log(kleur.white('   import "./globals.css"'));
-        console.log(kleur.white('   import "./theme-default.css"'));
+        console.log(kleur.cyan('📘 Importe os estilos em src/app/layout.tsx:'));
       } else {
-        console.log(kleur.cyan('📘 Para Vite, importe os estilos em src/main.tsx:'));
-        console.log(kleur.white('   import "./styles/globals.css"'));
-        console.log(kleur.white('   import "./styles/theme-default.css"'));
+        console.log(kleur.cyan('📘 Importe os estilos em src/main.tsx:'));
+      }
+      console.log(kleur.white(`   import "./${relativePath}globals.css"`));
+      console.log(kleur.white(`   import "./${relativePath}theme-${theme}.css"`));
+
+      if (!isTailwindV4) {
+        console.log('');
+        console.log(kleur.cyan('📘 Crie tailwind.config.cjs na raiz:'));
+        console.log(kleur.white('   const preset = require("./tailwind-preset.cjs");'));
+        console.log(kleur.white('   module.exports = { presets: [preset], content: ["./index.html", "./src/**/*.{ts,tsx}"] };'));
+        console.log('');
+        console.log(kleur.cyan('📘 Crie postcss.config.cjs na raiz:'));
+        console.log(kleur.white('   module.exports = { plugins: { tailwindcss: {}, autoprefixer: {} } };'));
+      } else {
+        console.log('');
+        console.log(kleur.green('✅ Tailwind v4 detectado! Nenhuma config extra necessária.'));
       }
     } catch (err) {
       console.error(kleur.red('Erro na inicializacao:'), err);
