@@ -1,0 +1,75 @@
+import type { Meta, StoryObj } from '@storybook/react';
+import { Tooltip } from '../ui/Tooltip';
+import { Button } from '../ui/Button';
+
+const meta: Meta<typeof Tooltip> = {
+  title: 'Components/Tooltip',
+  component: Tooltip,
+  tags: ['autodocs'],
+  argTypes: {
+    position: {
+      control: 'select',
+      options: ['top', 'bottom', 'left', 'right'],
+    },
+    variant: {
+      control: 'select',
+      options: ['dark', 'light'],
+    },
+    delay: { control: 'number' },
+    content: { control: 'text' },
+  },
+  args: {
+    content: 'Tooltip content',
+    position: 'top',
+    variant: 'dark',
+    delay: 200,
+    disabled: false,
+    children: <Button>Hover me</Button>,
+  },
+};
+
+export default meta;
+type Story = StoryObj<typeof Tooltip>;
+
+export const Top: Story = {};
+
+export const Bottom: Story = {
+  args: { position: 'bottom' },
+};
+
+export const Left: Story = {
+  args: { position: 'left' },
+};
+
+export const Right: Story = {
+  args: { position: 'right' },
+};
+
+export const Light: Story = {
+  args: { variant: 'light' },
+};
+
+export const LongContent: Story = {
+  args: {
+    content: 'This is a longer tooltip message with more details.',
+  },
+};
+
+export const AllPositions: Story = {
+  render: () => (
+    <div className="flex items-center justify-center gap-16 p-16">
+      <Tooltip content="Top tooltip" position="top">
+        <Button>Top</Button>
+      </Tooltip>
+      <Tooltip content="Bottom tooltip" position="bottom">
+        <Button>Bottom</Button>
+      </Tooltip>
+      <Tooltip content="Left tooltip" position="left">
+        <Button>Left</Button>
+      </Tooltip>
+      <Tooltip content="Right tooltip" position="right">
+        <Button>Right</Button>
+      </Tooltip>
+    </div>
+  ),
+};
