@@ -1,0 +1,39 @@
+:root {
+  --primary: 142.1 76.2% 36.3%;
+  --primary-foreground: 355.7 100% 97.3%;
+  --secondary: 142.1 30% 96.1%;
+  --secondary-foreground: 142.1 40% 10%;
+  --muted: 142.1 20% 95%;
+  --muted-foreground: 142.1 10% 45%;
+  --accent: 142.1 30% 96.1%;
+  --accent-foreground: 142.1 40% 10%;
+  --ring: 142.1 76.2% 36.3%;
+  --surface: 0 0% 96.1%;
+  --surface-foreground: 0 0% 45.1%;
+  --surface-hover: 0 0% 90.2%;
+  --tooltip: 0 0% 12.2%;
+  --tooltip-foreground: 0 0% 100%;
+  --switch-bg: 0 0% 86.7%;
+  --ring-success: 142.1 76.2% 36.3%;
+  --ring-warning: 38 92% 50%;
+}
+
+.dark {
+  --primary: 142.1 70.6% 45.3%;
+  --primary-foreground: 144.9 80.4% 10%;
+  --secondary: 142.1 30% 17.5%;
+  --secondary-foreground: 142.1 20% 95%;
+  --muted: 142.1 30% 15%;
+  --muted-foreground: 142.1 10% 60%;
+  --accent: 142.1 30% 17.5%;
+  --accent-foreground: 142.1 20% 95%;
+  --ring: 142.1 70.6% 45.3%;
+  --surface: 144 30% 8%;
+  --surface-foreground: 142.1 10% 60%;
+  --surface-hover: 142.1 30% 13%;
+  --tooltip: 0 0% 93%;
+  --tooltip-foreground: 0 0% 12.2%;
+  --switch-bg: 142.1 30% 17.5%;
+  --ring-success: 142.1 70.6% 45.3%;
+  --ring-warning: 48 96% 50%;
+}
