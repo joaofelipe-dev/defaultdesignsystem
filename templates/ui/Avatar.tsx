@@ -36,7 +36,7 @@ export const Avatar = React.forwardRef<HTMLDivElement, AvatarProps>(
 
         {status && (
           <span
-            className={cn('absolute bottom-0 right-0 block rounded-full ring-2 ring-white', {
+            className={cn('absolute bottom-0 right-0 block rounded-full ring-2 ring-background', {
               'bg-success': status === 'online',
               'bg-muted-foreground': status === 'offline',
               'bg-destructive': status === 'busy',

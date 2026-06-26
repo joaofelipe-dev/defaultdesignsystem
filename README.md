@@ -1,57 +1,57 @@
-# defaultDesignSystem
+# @joaofelipe-dev/defaultdesignsystem
 
-Biblioteca de componentes React com Tailwind CSS, instalada via CLI — o código é copiado direto para seu projeto, dando 100% de controle.
+React component library with Tailwind CSS. Install via CLI -- the source is copied directly to your project, giving you full ownership and zero vendor lock-in. 17 accessible components, all typed with TypeScript.
 
-Todos os 17 componentes usam o utilitário `cn` (clsx + tailwind-merge).
-
-Para detalhes de cada componente, veja [COMPONENTS.md](./COMPONENTS.md).
+```bash
+npx @joaofelipe-dev/defaultdesignsystem init
+npx @joaofelipe-dev/defaultdesignsystem add Button
+npx @joaofelipe-dev/defaultdesignsystem add all
+```
 
 ---
 
-## Instalação
+## Quick start
 
-Dentro do seu projeto React/Next.js:
+Inside your React/Next.js project:
 
 ```bash
-npm install github:joaofelipe-dev/defaultdesignsystem
+npm install @joaofelipe-dev/defaultdesignsystem
 npx defaultdesignsystem init
 ```
 
-O `init` detecta automaticamente:
-- **Framework**: Next.js (copia para `src/app/`) ou Vite (copia para `src/styles/`)
-- **Tailwind v3 vs v4**: v4 gera `globals.css` com `@import "tailwindcss"` + `@theme` (sem preset extra)
+The `init` command detects:
+- **Framework:** Next.js copies styles to `src/app/`, Vite to `src/styles/`
+- **Tailwind version:** v4 generates `@import "tailwindcss"` + `@theme` (no extra config needed)
 
-Por padrão o tema **default** (zinc) é aplicado. Para escolher outro tema já no init:
+Choose a theme:
 
 ```bash
 npx defaultdesignsystem init --theme green
 ```
 
-Temas disponíveis: `default`, `green`, `violet`, `orange`, `neutral`
+Themes: `default`, `green`, `violet`, `orange`, `neutral`
 
-### Pós-instalação
-
-Importe os estilos no entry point do seu projeto.
+### Import styles
 
 **Next.js** (`src/app/layout.tsx`):
 ```ts
 import "./globals.css"
-import "./theme-green.css"
+import "./theme-default.css"
 ```
 
 **Vite** (`src/main.tsx`):
 ```ts
 import "./styles/globals.css"
-import "./styles/theme-green.css"
+import "./styles/theme-default.css"
 ```
 
-### Tailwind v3 — config extra
+---
 
-Se seu projeto usa Tailwind v3, crie um `postcss.config.cjs` e `tailwind.config.cjs` no raiz:
+## Tailwind v3
 
-<details>
-<summary>postcss.config.cjs</summary>
+Projects on Tailwind v3 need two extra config files at the project root:
 
+**postcss.config.cjs**
 ```js
 module.exports = {
   plugins: {
@@ -60,58 +60,25 @@ module.exports = {
   },
 }
 ```
-</details>
 
-<details>
-<summary>tailwind.config.cjs</summary>
-
+**tailwind.config.cjs**
 ```js
-const { defaultDesignSystem } = require("defaultdesignsystem/tailwind-preset.cjs")
+const preset = require("./tailwind-preset.cjs")
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  presets: [defaultDesignSystem],
+  presets: [preset],
   content: ["./src/**/*.{ts,tsx}"],
 }
 ```
-</details>
 
-**Tailwind v4 não precisa de config extra** — o `@theme` no `globals.css` resolve automaticamente.
-
----
-
-## Adicionar componentes
-
-```bash
-npx defaultdesignsystem add Button
-npx defaultdesignsystem add all     # todos os 17 componentes
-```
-
-Os componentes são copiados para `src/components/ui/`.
+Tailwind v4 does not need extra config -- the `@theme` block in globals.css handles everything.
 
 ---
 
-## Reset styles (opcional)
+## Theming
 
-Se quiser reset CSS global além do Tailwind, crie um `src/styles/reset.css`:
-
-```css
-*,
-*::before,
-*::after {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-```
-
-Importe antes do globals.css no entry point.
-
----
-
-## Temas personalizados
-
-Para criar seu próprio tema, crie um arquivo CSS com as variáveis que deseja sobrescrever:
+Create a custom theme by overriding CSS variables:
 
 ```css
 /* src/styles/theme-custom.css */
@@ -126,4 +93,34 @@ Para criar seu próprio tema, crie um arquivo CSS com as variáveis que deseja s
 }
 ```
 
-E importe após o `globals.css`.
+Import it after globals.css.
+
+---
+
+## Component gallery
+
+Run Storybook to browse an interactive gallery of all components:
+
+```bash
+npm run storybook
+```
+
+Or build the static site:
+
+```bash
+npm run build-storybook
+```
+
+---
+
+## Development
+
+See [CONTRIBUTING.md](./CONTRIBUTING.md) for setup, patterns, and pull request workflow.
+
+```bash
+npm install        # install dependencies
+npm run storybook  # start dev server (port 6006)
+npm test           # run tests
+npm run typecheck  # typeScript check
+npm run lint       # lint check
+```

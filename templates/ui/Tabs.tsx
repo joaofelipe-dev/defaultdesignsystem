@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState, useId, useCallback } from 'react';
 import { cn } from '../utils/cn';
 
@@ -17,7 +19,7 @@ export interface TabsProps {
   className?: string;
 }
 
-export const Tabs: React.FC<TabsProps> = ({
+export function Tabs({
   variant = 'line',
   size = 'md',
   orientation = 'horizontal',
@@ -25,7 +27,7 @@ export const Tabs: React.FC<TabsProps> = ({
   tabs,
   defaultTab,
   className,
-}) => {
+}: TabsProps) {
   const [activeTab, setActiveTab] = useState(defaultTab || (tabs.length > 0 ? tabs[0].id : ''));
   const tablistRef = React.useRef<HTMLDivElement>(null);
   const uid = useId();

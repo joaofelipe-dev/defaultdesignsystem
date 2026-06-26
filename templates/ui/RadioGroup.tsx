@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useCallback, useRef } from 'react';
 import { cn } from '../utils/cn';
 
@@ -18,7 +20,7 @@ export interface RadioGroupProps {
   className?: string;
 }
 
-export const RadioGroup: React.FC<RadioGroupProps> = ({
+export function RadioGroup({
   size = 'md',
   orientation = 'vertical',
   disabled = false,
@@ -27,7 +29,7 @@ export const RadioGroup: React.FC<RadioGroupProps> = ({
   value,
   onChange,
   className,
-}) => {
+}: RadioGroupProps) {
   const groupRef = useRef<HTMLDivElement>(null);
 
   const handleKeyDown = useCallback(

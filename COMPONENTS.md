@@ -1,229 +1,219 @@
-# 🧱 defaultDesignSystem - Documentação de Componentes
+# Component Reference
 
-Bem-vindo à documentação oficial do `defaultDesignSystem`. Todos os componentes foram construídos utilizando Tailwind CSS, são totalmente acessíveis, responsivos e suportam customizações via a propriedade `className` (graças ao utilitário `cn` embutido).
-
-Abaixo você encontra um resumo rápido de cada componente, o que eles fazem e suas principais propriedades (props).
+All 17 components use the `cn` utility (clsx + tailwind-merge) for seamless className overrides.
 
 ---
 
-## 1. Input (`<Input />`)
-Um campo de entrada de texto padronizado com suporte para ícones.
+## Input
+`<Input />` -- Text field with icon support.
 
-- **`variant`**: Estilo do campo (`"default" | "filled" | "outline" | "ghost"`)
-- **`size`**: Tamanho do input (`"sm" | "md" | "lg"`)
-- **`status`**: Indicador visual de estado (`"default" | "error" | "success" | "warning"`)
-- **`fullWidth`** (`boolean`): Se `true`, ocupa 100% da largura.
-- **`leftIcon` / `rightIcon`**: Aceita elementos React (ex: SVGs) para serem exibidos dentro do input.
-
----
-
-## 2. Select (`<Select />`)
-Um menu dropdown clássico.
-
-- **`variant`**: Estilo do campo (`"default" | "outline" | "filled"`)
-- **`size`**: Tamanho do componente (`"sm" | "md" | "lg"`)
-- **`status`**: Indicador visual de estado (`"error" | "success" | "default"`)
-- **`multiple`** (`boolean`): Se `true`, permite selecionar múltiplas opções.
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| variant | `"default" \| "filled" \| "outline" \| "ghost"` | `"default"` | Visual style |
+| size | `"sm" \| "md" \| "lg"` | `"md"` | Input size |
+| status | `"default" \| "error" \| "success" \| "warning"` | `"default"` | Validation state |
+| fullWidth | `boolean` | `false` | Stretch to 100% width |
+| leftIcon | `ReactNode` | -- | Icon inside left side |
+| rightIcon | `ReactNode` | -- | Icon inside right side |
 
 ---
 
-## 3. Modal (`<Modal />`)
-Janelas de diálogo sobrepostas ao conteúdo principal.
+## Select
+`<Select />` -- Dropdown menu.
 
-- **`open`** (`boolean`): *Obrigatório*. Controla a visibilidade do modal.
-- **`onClose`**: Função acionada ao tentar fechar o modal.
-- **`size`**: Largura máxima (`"sm" | "md" | "lg" | "xl" | "full"`).
-- **`variant`**: Como ele é renderizado na tela (`"default" | "fullscreen" | "centered"`).
-- **`closeOnOverlayClick` / `closeOnEsc`** (`boolean`): Permite que o modal feche automaticamente em interações do usuário.
-- **`title` / `description`**: Cabeçalho do modal.
-
----
-
-## 4. Card (`<Card />`)
-Contêiner genérico flexível para agrupar conteúdo relacionado.
-
-- **`variant`**: Estilo visual (`"default" | "outlined" | "elevated"`).
-- **`padding`**: Espaçamento interno padronizado (`"none" | "sm" | "md" | "lg"`).
-- **`interactive`** (`boolean`): Se `true`, adiciona um sútil efeito de hover e transição.
-- **`fullWidth`** (`boolean`): Força 100% de largura no contêiner.
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| variant | `"default" \| "outline" \| "filled"` | `"default"` | Visual style |
+| size | `"sm" \| "md" \| "lg"` | `"md"` | Select size |
+| status | `"error" \| "success" \| "default"` | `"default"` | Validation state |
+| multiple | `boolean` | `false` | Allow multiple selection |
 
 ---
 
-## 5. Table (`<Table />`)
-Organização de dados de forma semântica.
+## Modal
+`<Modal />` -- Dialog overlay.
 
-- **`variant`**: Estilo das linhas e bordas (`"simple" | "striped" | "bordered"`).
-- **`size`**: Densidade e espaçamento da tabela (`"sm" | "md" | "lg"`).
-- **`hoverable`** (`boolean`): Ativa efeito de hover nas linhas de `tbody`.
-- **`selectable`** (`boolean`): Aplica cursor pointer (indicando que a linha tem ação).
-- **`loading`** (`boolean`): Exibe um overlay de carregamento sobre os dados.
-
----
-
-## 6. Toast (`<Toast />`)
-Notificações não-obstrutivas em formato "snack".
-
-- **`message`**: *Obrigatório*. O texto exibido.
-- **`variant`**: Cor/Significado da notificação (`"success" | "error" | "warning" | "info"`).
-- **`duration`**: Tempo em milissegundos antes de sumir automático (padrão: `3000`).
-- **`position`**: Onde aparece (`"top" | "bottom" | "top-right" | "bottom-right"`).
-- **`closable`** (`boolean`): Permite que o usuário feche manualmente no botão de X.
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| open | `boolean` | (required) | Visibility control |
+| onClose | `() => void` | -- | Close handler |
+| size | `"sm" \| "md" \| "lg" \| "xl" \| "full"` | `"md"` | Max width |
+| variant | `"default" \| "fullscreen" \| "centered"` | `"default"` | Layout variant |
+| closeOnOverlayClick | `boolean` | `true` | Close on backdrop click |
+| closeOnEsc | `boolean` | `true` | Close on Escape key |
+| title | `string` | -- | Modal header |
+| description | `string` | -- | Modal description |
 
 ---
 
-## 7. Tooltip (`<Tooltip />`)
-Dicas interativas flutuantes ao passar o mouse ou focar um elemento.
+## Card
+`<Card />` -- Content container.
 
-- **`content`**: *Obrigatório*. O que aparecerá no balão.
-- **`position`**: Onde será ancorado (`"top" | "bottom" | "left" | "right"`).
-- **`variant`**: Estilo escuro ou claro (`"dark" | "light"`).
-- **`delay`**: Milissegundos antes de aparecer o balão (padrão `200`).
-- **`disabled`** (`boolean`): Permite desligar temporariamente a exibição do tooltip.
-
----
-
-## 8. Tabs (`<Tabs />`)
-Alternância de contexto entre diferentes painéis em um mesmo espaço.
-
-- **`tabs`**: *Obrigatório*. Um array contendo os dados (ex: `[{ id, label, content }]`).
-- **`variant`**: Estilo dos botões (`"line" | "solid" | "pills"`).
-- **`orientation`**: Vertical ou Horizontal (`"horizontal" | "vertical"`).
-- **`fullWidth`** (`boolean`): Se `true`, distribui as abas ocupando todo o espaço em largura.
-- **`defaultTab`**: ID da tab selecionada inicialmente.
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| variant | `"default" \| "outlined" \| "elevated"` | `"default"` | Visual style |
+| padding | `"none" \| "sm" \| "md" \| "lg"` | `"md"` | Inner spacing |
+| interactive | `boolean` | `false` | Hover effect |
+| fullWidth | `boolean` | `false` | 100% width |
 
 ---
 
-## 9. Accordion (`<Accordion />`)
-Painéis colapsáveis (ideal para FAQs).
+## Table
+`<Table />` -- Semantic data table.
 
-- **`items`**: *Obrigatório*. Um array com as opções (ex: `[{ id, title, content }]`).
-- **`variant`**: Visualização (`"default" | "bordered" | "separated"`).
-- **`multiple`** (`boolean`): Se `true`, o usuário pode abrir mais de um item por vez.
-- **`collapsible`** (`boolean`): Permite fechar o item aberto se ele for clicado de novo.
-- **`defaultOpen`**: Array de IDs que devem nascer abertos.
-
----
-
-## 10. Spinner (`<Spinner />`)
-Indicador de progresso/carregamento.
-
-- **`variant`**: O tipo da animação (`"circular" | "dots" | "bars"`).
-- **`size`**: Tamanho (`"sm" | "md" | "lg"`).
-- **`color`**: Cor do elemento (`"primary" | "neutral" | "white"`).
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| variant | `"simple" \| "striped" \| "bordered"` | `"simple"` | Row/border style |
+| size | `"sm" \| "md" \| "lg"` | `"md"` | Density |
+| hoverable | `boolean` | `false` | Row hover effect |
+| selectable | `boolean` | `false` | Pointer cursor |
+| loading | `boolean` | `false` | Loading overlay |
 
 ---
 
-## 11. Switch (`<Switch />`)
-Toggle de alternância binária (On/Off).
+## Toast
+`<Toast />` -- Non-blocking notification.
 
-- **`checked`** (`boolean`): Estado nativo do toggle.
-- **`disabled`** (`boolean`): Desativa a interação com o switch.
-- **`size`**: O quão grande a "cápsula" é (`"sm" | "md" | "lg"`).
-- **`color`**: Cor quando está ativado (`"primary" | "success" | "danger"`).
-
----
-
-## 12. Checkbox (`<Checkbox />`)
-Um ou múltiplos selects de dados booleanos.
-
-- **`checked`** (`boolean`): Estado de checagem.
-- **`disabled`** (`boolean`): Desativa a interação com a caixinha.
-- **`size`**: Dimensões da caixinha (`"sm" | "md" | "lg"`).
-- **`indeterminate`** (`boolean`): Se verdadeiro, mostra aquele tracinho (estado parcialmente selecionado) na UI.
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| message | `string` | (required) | Notification text |
+| variant | `"success" \| "error" \| "warning" \| "info"` | `"info"` | Color/meaning |
+| duration | `number` | `3000` | Auto-dismiss ms |
+| position | `"top" \| "bottom" \| "top-right" \| "bottom-right"` | `"top-right"` | Screen position |
+| closable | `boolean` | `true` | Show close button |
 
 ---
 
-## 13. RadioGroup (`<RadioGroup />`)
-Conjunto de botões de rádio para uma escolha de várias opções.
+## Tooltip
+`<Tooltip />` -- Floating hint on hover/focus.
 
-- **`name`**: Nome de formulário do agrupamento.
-- **`options`**: Array configurado com (`[{ label, value, disabled }]`).
-- **`orientation`**: Direção de renderização (`"horizontal" | "vertical"`).
-- **`disabled`** (`boolean`): Se `true`, desativa todo o grupo.
-
----
-
-## 14. Badge (`<Badge />`)
-Selo indicativo (ideal para rótulos, novos itens, etc).
-
-- **`variant`**: Como a cor preenche (`"solid" | "outline" | "soft"`).
-- **`color`**: Semântica de cor (`"primary" | "success" | "warning" | "danger"`).
-- **`size`**: Tamanho da fonte e margens (`"sm" | "md" | "lg"`).
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| content | `string` | (required) | Tooltip text |
+| position | `"top" \| "bottom" \| "left" \| "right"` | `"top"` | Anchor position |
+| variant | `"dark" \| "light"` | `"dark"` | Color scheme |
+| delay | `number` | `200` | Show delay in ms |
+| disabled | `boolean` | `false` | Temporarily disable |
 
 ---
 
-## 15. Avatar (`<Avatar />`)
-Representação de uma entidade. Pode ser imagem ou inicias (fallback).
+## Tabs
+`<Tabs />` -- Context switcher between panels.
 
-- **`fallback`**: *Obrigatório*. Um texto exibido caso falhe a imagem (ex: "JF").
-- **`src`**: O link da foto.
-- **`size`**: Tamanhos variados de avatar.
-- **`shape`**: Arredondamento (`"circle" | "square"`).
-- **`status`**: Uma pequena bolinha colorida indicando contexto (`"online" | "offline" | "busy"`).
-
----
-
-## 16. Divider (`<Divider />`)
-Linhas de separação estrutural para melhor organização do visual.
-
-- **`orientation`**: Sentido (`"horizontal" | "vertical"`).
-- **`variant`**: Traço contínuo ou tracejado (`"solid" | "dashed"`).
-- **`spacing`**: Distância de margem nas pontas (`"sm" | "md" | "lg"`).
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| tabs | `{ id, label, content }[]` | (required) | Tab definitions |
+| variant | `"line" \| "solid" \| "pills"` | `"line"` | Tab style |
+| size | `"sm" \| "md" \| "lg"` | `"md"` | Tab size |
+| orientation | `"horizontal" \| "vertical"` | `"horizontal"` | Layout direction |
+| fullWidth | `boolean` | `false` | Stretch to full width |
+| defaultTab | `string` | first tab | Initially selected tab |
 
 ---
 
-## 17. Button (`<Button />`)
-Botão interativo com diversas variações visuais.
+## Accordion
+`<Accordion />` -- Collapsible panels.
 
-- **`variant`**: Estilo base do botão (`"default" | "destructive" | "outline" | "secondary" | "ghost" | "link"`).
-- **`size`**: Tamanhos padrão (`"default" | "sm" | "lg" | "icon"`).
-- **`fullWidth`** (`boolean`): Se `true`, expande o botão para ocupar 100% da largura.
-
----
-
-## 📖 Storybook
-
-Todas as stories estão em `templates/stories/` e podem ser visualizadas com:
-
-```bash
-npm run storybook    # Dev server em http://localhost:6006
-npm run build-storybook  # Build estático em storybook-static/
-```
-
-Cada componente possui stories demonstrando variantes, tamanhos, estados e interatividade.
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| items | `{ id, title, content }[]` | (required) | Panel definitions |
+| variant | `"default" \| "bordered" \| "separated"` | `"default"` | Visual style |
+| multiple | `boolean` | `false` | Allow multiple open |
+| collapsible | `boolean` | `true` | Allow closing open item |
+| defaultOpen | `string[]` | `[]` | Initially open IDs |
 
 ---
 
-## 🎨 Theming com CSS Variables
+## Spinner
+`<Spinner />` -- Loading indicator.
 
-O design system utiliza **CSS Variables** para theming completo. As variáveis são definidas em `src/styles/globals.css` e mapeadas via `tailwind-preset.js`.
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| variant | `"circular" \| "dots" \| "bars"` | `"circular"` | Animation type |
+| size | `"sm" \| "md" \| "lg"` | `"md"` | Spinner size |
+| color | `"primary" \| "neutral" \| "white"` | `"primary"` | Color |
 
-### Cores disponíveis
+---
 
-| Variável | Uso |
-|---|---|
-| `--background` / `--foreground` | Fundo e texto principal |
-| `--primary` / `--primary-foreground` | Cor primária (botões, links) |
-| `--secondary` / `--secondary-foreground` | Cor secundária |
-| `--destructive` / `--destructive-foreground` | Ações destrutivas (erro) |
-| `--success` / `--success-foreground` | Estados de sucesso |
-| `--warning` / `--warning-foreground` | Estados de aviso |
-| `--muted` / `--muted-foreground` | Elementos atenuados |
-| `--accent` / `--accent-foreground` | Destaques (hover, ghost) |
-| `--border` / `--input` | Bordas e inputs |
-| `--ring` | Foco (focus ring) |
+## Switch
+`<Switch />` -- Binary toggle.
 
-### Dark mode
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| checked | `boolean` | `false` | Toggle state |
+| disabled | `boolean` | `false` | Disable interaction |
+| size | `"sm" \| "md" \| "lg"` | `"md"` | Capsule size |
+| color | `"primary" \| "success" \| "danger"` | `"primary"` | Active color |
 
-Ative adicionando a classe `.dark` no elemento `<html>`. O tailwind-preset.js já suporta:
+---
 
-```css
-/* Nos seus styles globais */
-@layer base {
-  :root { /* cores do tema claro */ }
-  .dark  { /* cores do tema escuro */ }
-}
-```
+## Checkbox
+`<Checkbox />` -- Boolean checkbox.
 
-### Dica de ouro
-Você sempre pode passar uma string extra via `className` para qualquer componente. Todos eles usam `cn(..., className)`, então você consegue facilmente sobrescrever cores, margens, display com facilidade utilizando as classes do TailwindCSS de onde você importá-lo!
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| checked | `boolean` | `false` | Checked state |
+| disabled | `boolean` | `false` | Disable interaction |
+| size | `"sm" \| "md" \| "lg"` | `"md"` | Checkbox size |
+| indeterminate | `boolean` | `false` | Partial selection |
+
+---
+
+## RadioGroup
+`<RadioGroup />` -- Radio button group.
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| name | `string` | (required) | Form name |
+| options | `{ label, value, disabled? }[]` | (required) | Radio options |
+| size | `"sm" \| "md" \| "lg"` | `"md"` | Radio size |
+| orientation | `"horizontal" \| "vertical"` | `"vertical"` | Layout direction |
+| disabled | `boolean` | `false` | Disable all radios |
+| value | `string` | -- | Currently selected value |
+| onChange | `(value: string) => void` | -- | Selection handler |
+
+---
+
+## Badge
+`<Badge />` -- Status indicator label.
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| variant | `"solid" \| "outline" \| "soft"` | `"solid"` | Fill style |
+| color | `"primary" \| "success" \| "warning" \| "danger"` | `"primary"` | Semantic color |
+| size | `"sm" \| "md" \| "lg"` | `"md"` | Font and padding |
+
+---
+
+## Avatar
+`<Avatar />` -- Entity representation (image or initials).
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| fallback | `string` | (required) | Text shown when image fails |
+| src | `string` | -- | Image URL |
+| size | `"sm" \| "md" \| "lg" \| "xl"` | `"md"` | Avatar size |
+| shape | `"circle" \| "square"` | `"circle"` | Border radius |
+| status | `"online" \| "offline" \| "busy"` | -- | Status dot |
+
+---
+
+## Divider
+`<Divider />` -- Structural separator.
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| orientation | `"horizontal" \| "vertical"` | `"horizontal"` | Direction |
+| variant | `"solid" \| "dashed"` | `"solid"` | Line style |
+| spacing | `"sm" \| "md" \| "lg"` | `"md"` | Margin size |
+
+---
+
+## Button
+`<Button />` -- Interactive button.
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| variant | `"default" \| "destructive" \| "outline" \| "secondary" \| "ghost" \| "link"` | `"default"` | Visual style |
+| size | `"default" \| "sm" \| "lg" \| "icon"` | `"default"` | Button size |
+| fullWidth | `boolean` | `false` | 100% width |

@@ -27,9 +27,6 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
           ref={ref}
           multiple={multiple}
           aria-invalid={status === 'error' ? true : undefined}
-          aria-describedby={
-            status === 'error' || status === 'success' ? `${props.id || ''}-status` : undefined
-          }
           className={cn(
             'flex w-full appearance-none rounded-md px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50',
             {

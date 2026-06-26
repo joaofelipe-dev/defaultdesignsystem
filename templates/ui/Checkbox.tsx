@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useEffect, useRef } from 'react';
 import { cn } from '../utils/cn';
 
@@ -9,13 +11,12 @@ export interface CheckboxProps extends Omit<React.InputHTMLAttributes<HTMLInputE
 export const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
   ({ className, size = 'md', indeterminate = false, checked, disabled, ...props }, ref) => {
     const internalRef = useRef<HTMLInputElement>(null);
-    const resolvedRef = (ref as React.MutableRefObject<HTMLInputElement>) || internalRef;
 
     useEffect(() => {
-      if (resolvedRef.current) {
-        resolvedRef.current.indeterminate = indeterminate;
+      if (internalRef.current) {
+        internalRef.current.indeterminate = indeterminate;
       }
-    }, [resolvedRef, indeterminate]);
+    }, [indeterminate]);
 
     return (
       <label
@@ -27,7 +28,11 @@ export const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
       >
         <input
           type="checkbox"
-          ref={resolvedRef}
+          ref={(node) => {
+            internalRef.current = node;
+            if (typeof ref === 'function') ref(node);
+            else if (ref) ref.current = node;
+          }}
           checked={checked}
           disabled={disabled}
           className={cn(

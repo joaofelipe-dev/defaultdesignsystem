@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState, useId } from 'react';
 import { cn } from '../utils/cn';
 
@@ -16,14 +18,14 @@ export interface AccordionProps {
   className?: string;
 }
 
-export const Accordion: React.FC<AccordionProps> = ({
+export function Accordion({
   variant = 'default',
   multiple = false,
   collapsible = true,
   defaultOpen = [],
   items,
   className,
-}) => {
+}: AccordionProps) {
   const [openItems, setOpenItems] = useState<Set<string>>(new Set(defaultOpen));
   const uid = useId();
 

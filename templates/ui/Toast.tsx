@@ -1,4 +1,6 @@
-import React, { useEffect, useRef, useState } from 'react';
+'use client';
+
+import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { cn } from '../utils/cn';
 
@@ -26,7 +28,7 @@ const positionStyles: Record<string, string> = {
   'bottom-right': 'bottom-4 right-4',
 };
 
-export const Toast: React.FC<ToastProps> = ({
+export function Toast({
   variant = 'info',
   duration = 3000,
   position = 'top-right',
@@ -34,13 +36,18 @@ export const Toast: React.FC<ToastProps> = ({
   message,
   onClose,
   className,
-}) => {
+}: ToastProps) {
+  const [mounted, setMounted] = useState(false);
   const [visible, setVisible] = useState(true);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const handleClose = () => {
     setVisible(false);
-    if (onClose) onClose();
+    onClose?.();
   };
 
   useEffect(() => {
@@ -53,15 +60,9 @@ export const Toast: React.FC<ToastProps> = ({
     return () => {
       if (timerRef.current) clearTimeout(timerRef.current);
     };
-  }, [duration]);
+  }, [duration, handleClose]);
 
-  useEffect(() => {
-    return () => {
-      if (timerRef.current) clearTimeout(timerRef.current);
-    };
-  }, []);
-
-  if (!visible) return null;
+  if (!mounted || !visible) return null;
 
   const toast = (
     <div

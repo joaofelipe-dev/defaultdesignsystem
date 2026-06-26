@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState, useRef, useEffect, useId } from 'react';
 import { cn } from '../utils/cn';
 
@@ -11,7 +13,7 @@ export interface TooltipProps {
   className?: string;
 }
 
-export const Tooltip: React.FC<TooltipProps> = ({
+export function Tooltip({
   position = 'top',
   variant = 'dark',
   delay = 200,
@@ -19,7 +21,7 @@ export const Tooltip: React.FC<TooltipProps> = ({
   content,
   children,
   className,
-}) => {
+}: TooltipProps) {
   const [visible, setVisible] = useState(false);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const triggerRef = useRef<HTMLDivElement>(null);

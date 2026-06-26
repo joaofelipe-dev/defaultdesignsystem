@@ -1,4 +1,3 @@
-import React from 'react';
 import { cn } from '../utils/cn';
 
 export interface SpinnerProps {
@@ -8,12 +7,12 @@ export interface SpinnerProps {
   className?: string;
 }
 
-export const Spinner: React.FC<SpinnerProps> = ({
+export function Spinner({
   size = 'md',
   variant = 'circular',
   color = 'primary',
   className,
-}) => {
+}: SpinnerProps) {
   const colorClass = {
     primary: 'text-primary',
     neutral: 'text-muted-foreground',

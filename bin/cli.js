@@ -184,6 +184,8 @@ program
       if (!(await fs.pathExists(cssTarget))) {
         await fs.copy(cssSource, cssTarget);
         console.log(kleur.green(`✔ Tema base ${isNext ? 'src/app' : 'src/styles'}/globals.css adicionado.`));
+      } else if (isTailwindV4) {
+        console.log(kleur.yellow(`⚠ globals.css ja existe. Certifique-se de que o arquivo theme-${theme}.css seja importado APOS globals.css para que as cores customizadas funcionem no Tailwind v4.`));
       }
 
       // Copy theme preset
@@ -220,24 +222,24 @@ program
       console.log('');
       const relativePath = isNext ? '' : 'styles/';
       if (isNext) {
-        console.log(kleur.cyan('📘 Importe os estilos em src/app/layout.tsx:'));
+        console.log(kleur.cyan('> Importe os estilos em src/app/layout.tsx:'));
       } else {
-        console.log(kleur.cyan('📘 Importe os estilos em src/main.tsx:'));
+        console.log(kleur.cyan('> Importe os estilos em src/main.tsx:'));
       }
       console.log(kleur.white(`   import "./${relativePath}globals.css"`));
       console.log(kleur.white(`   import "./${relativePath}theme-${theme}.css"`));
 
       if (!isTailwindV4) {
         console.log('');
-        console.log(kleur.cyan('📘 Crie tailwind.config.cjs na raiz:'));
+        console.log(kleur.cyan('> Crie tailwind.config.cjs na raiz:'));
         console.log(kleur.white('   const preset = require("./tailwind-preset.cjs");'));
         console.log(kleur.white('   module.exports = { presets: [preset], content: ["./index.html", "./src/**/*.{ts,tsx}"] };'));
         console.log('');
-        console.log(kleur.cyan('📘 Crie postcss.config.cjs na raiz:'));
+        console.log(kleur.cyan('> Crie postcss.config.cjs na raiz:'));
         console.log(kleur.white('   module.exports = { plugins: { tailwindcss: {}, autoprefixer: {} } };'));
       } else {
         console.log('');
-        console.log(kleur.green('✅ Tailwind v4 detectado! Nenhuma config extra necessária.'));
+        console.log(kleur.green('> Tailwind v4 detectado! Nenhuma config extra necessaria.'));
       }
     } catch (err) {
       console.error(kleur.red('Erro na inicializacao:'), err);

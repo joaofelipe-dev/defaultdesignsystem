@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useEffect, useRef, useId, useCallback } from 'react';
 import { cn } from '../utils/cn';
 
@@ -17,7 +19,7 @@ export interface ModalProps {
 const FOCUSABLE_SELECTOR =
   'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
-export const Modal: React.FC<ModalProps> = ({
+export function Modal({
   open,
   onClose,
   size = 'md',
@@ -28,7 +30,7 @@ export const Modal: React.FC<ModalProps> = ({
   description,
   children,
   className,
-}) => {
+}: ModalProps) {
   const overlayRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const previousFocusRef = useRef<HTMLElement | null>(null);
