@@ -1,9 +1,9 @@
 {
-  "name": "defaultdesignsystem",
-  "version": "1.0.0",
-  "description": "A React component library distributed via CLI with full code ownership.",
+  "name": "@joaofelipe-dev/defaultdesignsystem",
+  "version": "1.0.2",
+  "description": "React component library copied to your project via CLI. Full ownership, zero vendor lock-in. 17 components styled with Tailwind CSS.",
   "bin": {
-    "defaultdesignsystem": "./bin/cli.js"
+    "defaultdesignsystem": "bin/cli.js"
   },
   "files": [
     "bin/",
@@ -29,9 +29,24 @@
     "design-system",
     "cli"
   ],
-  "author": "",
+  "author": {
+    "name": "Joao Felipe",
+    "email": "joaoufelipe@hotmail.com",
+    "url": "https://github.com/joaofelipe-dev"
+  },
   "license": "MIT",
   "type": "commonjs",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/joaofelipe-dev/defaultdesignsystem.git"
+  },
+  "bugs": {
+    "url": "https://github.com/joaofelipe-dev/defaultdesignsystem/issues"
+  },
+  "homepage": "https://github.com/joaofelipe-dev/defaultdesignsystem#readme",
+  "publishConfig": {
+    "access": "public"
+  },
   "dependencies": {
     "commander": "^14.0.3",
     "fs-extra": "^11.3.4",
@@ -39,8 +54,8 @@
     "prompts": "^2.4.2"
   },
   "devDependencies": {
-    "@storybook/addon-essentials": "^8.6.14",
-    "@storybook/addon-interactions": "^8.6.14",
+    "@storybook/addon-essentials": "^8.6.18",
+    "@storybook/addon-interactions": "^8.6.18",
     "@storybook/react": "^8.6.18",
     "@storybook/react-vite": "^8.6.18",
     "@testing-library/dom": "^10.4.1",
