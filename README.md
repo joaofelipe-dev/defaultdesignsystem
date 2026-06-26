@@ -8,6 +8,10 @@ npx @joaofelipe-dev/defaultdesignsystem add Button
 npx @joaofelipe-dev/defaultdesignsystem add all
 ```
 
+Todos os 17 componentes usam o utilitário `cn` (clsx + tailwind-merge).
+
+Para detalhes de cada componente, veja [COMPONENTS.md](./COMPONENTS.md), ou acesse o preview em https://joaofelipe-dev.github.io/defaultdesignsystem.
+
 ---
 
 ## Quick start
