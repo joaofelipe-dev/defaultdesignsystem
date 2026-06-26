@@ -4,7 +4,7 @@ Biblioteca de componentes React com Tailwind CSS, instalada via CLI — o códig
 
 Todos os 17 componentes usam o utilitário `cn` (clsx + tailwind-merge).
 
-Para detalhes de cada componente, veja [COMPONENTS.md](./COMPONENTS.md).
+Para detalhes de cada componente, veja [COMPONENTS.md](./COMPONENTS.md), ou acesse o preview em [https://joaofelipe-dev.github.io/defaultdesignsystem].
 
 ---
 
