@@ -31,7 +31,7 @@ export function Spinner({
         {[0, 1, 2].map((i) => (
           <div
             key={i}
-            className={cn('rounded-full motion-safe:animate-bounce', colorClass, sizePx.dot)}
+            className={cn('rounded-full motion-safe:animate-bounce bg-current', colorClass, sizePx.dot)}
             style={{ animationDelay: `${i * 0.1}s` }}
           />
         ))}
@@ -46,7 +46,7 @@ export function Spinner({
         {[0, 1, 2, 3].map((i) => (
           <div
             key={i}
-            className={cn('motion-safe:animate-pulse rounded', colorClass, sizePx.bar)}
+            className={cn('motion-safe:animate-pulse rounded bg-current', colorClass, sizePx.bar)}
             style={{ animationDelay: `${i * 0.15}s` }}
           />
         ))}
