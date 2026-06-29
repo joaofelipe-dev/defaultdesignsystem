@@ -56,20 +56,30 @@ export const LongContent: Story = {
 };
 
 export const AllPositions: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story: 'Hover over each button to see the tooltip in different positions.',
+      },
+    },
+  },
   render: () => (
-    <div className="flex items-center justify-center gap-16 p-16">
-      <Tooltip content="Top tooltip" position="top">
-        <Button>Top</Button>
-      </Tooltip>
-      <Tooltip content="Bottom tooltip" position="bottom">
-        <Button>Bottom</Button>
-      </Tooltip>
-      <Tooltip content="Left tooltip" position="left">
-        <Button>Left</Button>
-      </Tooltip>
-      <Tooltip content="Right tooltip" position="right">
-        <Button>Right</Button>
-      </Tooltip>
+    <div className="space-y-4">
+      <p className="text-xs text-muted-foreground/60 italic">Hover over each button to see the tooltip</p>
+      <div className="flex items-center justify-center gap-16 p-16">
+        <Tooltip content="Top tooltip" position="top">
+          <Button>Top</Button>
+        </Tooltip>
+        <Tooltip content="Bottom tooltip" position="bottom">
+          <Button>Bottom</Button>
+        </Tooltip>
+        <Tooltip content="Left tooltip" position="left">
+          <Button>Left</Button>
+        </Tooltip>
+        <Tooltip content="Right tooltip" position="right">
+          <Button>Right</Button>
+        </Tooltip>
+      </div>
     </div>
   ),
 };

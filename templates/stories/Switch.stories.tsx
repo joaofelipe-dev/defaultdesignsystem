@@ -59,12 +59,22 @@ export const DisabledChecked: Story = {
 };
 
 export const Interactive: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story: 'Click the switch to toggle it on and off.',
+      },
+    },
+  },
   render: () => {
     const [checked, setChecked] = useState(false);
     return (
-      <div className="flex items-center gap-4">
-        <Switch checked={checked} onChange={(e) => setChecked(e.target.checked)} />
-        <span className="text-sm text-muted-foreground">{checked ? 'On' : 'Off'}</span>
+      <div className="space-y-3">
+        <p className="text-xs text-muted-foreground/60 italic">Click the switch to toggle</p>
+        <div className="flex items-center gap-4">
+          <Switch checked={checked} onChange={(e) => setChecked(e.target.checked)} />
+          <span className="text-sm text-muted-foreground">{checked ? 'On' : 'Off'}</span>
+        </div>
       </div>
     );
   },

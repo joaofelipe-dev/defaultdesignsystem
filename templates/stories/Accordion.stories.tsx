@@ -23,6 +23,13 @@ const meta: Meta<typeof Accordion> = {
   title: 'Components/Accordion',
   component: Accordion,
   tags: ['autodocs'],
+  parameters: {
+    docs: {
+      description: {
+        component: 'Click an item to expand its content.',
+      },
+    },
+  },
   argTypes: {
     variant: {
       control: 'select',

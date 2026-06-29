@@ -67,10 +67,18 @@ export const WithDisabledOption: Story = {
 };
 
 export const Interactive: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story: 'Click an option to select it.',
+      },
+    },
+  },
   render: () => {
     const [value, setValue] = useState('a');
     return (
       <div className="space-y-4">
+        <p className="text-xs text-muted-foreground/60 italic">Click an option to select it</p>
         <RadioGroup
           name="interactive"
           options={options}

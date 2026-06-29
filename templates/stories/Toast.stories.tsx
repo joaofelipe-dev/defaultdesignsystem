@@ -61,10 +61,18 @@ export const NonClosable: Story = {
 };
 
 export const Interactive: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story: 'Click the button to show a toast notification.',
+      },
+    },
+  },
   render: () => {
     const [show, setShow] = useState(false);
     return (
       <div className="space-y-4">
+        <p className="text-xs text-muted-foreground/60 italic">Click the button to show a toast</p>
         <Button onClick={() => setShow(true)}>Show Toast</Button>
         {show && (
           <Toast

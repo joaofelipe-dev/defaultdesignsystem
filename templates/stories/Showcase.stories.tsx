@@ -289,6 +289,7 @@ function ButtonShowcase() {
 
   return (
     <Card variant="outlined" padding="lg">
+      <p className="text-xs text-muted-foreground/60 mb-3 italic">Click the pills above to change variant and size</p>
       <div className="flex flex-wrap gap-2 mb-4">
         <div className="flex gap-1 flex-wrap">
           {(['default', 'outline', 'secondary', 'ghost', 'link', 'destructive'] as const).map((v) => (
@@ -361,6 +362,7 @@ function InputShowcase() {
 
   return (
     <Card variant="outlined" padding="lg">
+      <p className="text-xs text-muted-foreground/60 mb-3 italic">Click the pills above to change variant</p>
       <div className="flex gap-1 flex-wrap mb-4">
         {(['default', 'filled', 'outline', 'ghost'] as const).map((v) => (
           <button key={v} onClick={() => setVariant(v)} className={`px-2.5 py-1 text-xs rounded-md transition-all ${variant === v ? 'bg-primary text-primary-foreground shadow-sm' : 'bg-muted text-muted-foreground hover:bg-accent'}`}>{v}</button>
@@ -402,6 +404,7 @@ function SelectShowcase() {
 function CheckboxShowcase({ checked, onChange }: { checked: boolean; onChange: (v: boolean) => void }) {
   return (
     <Card variant="outlined" padding="lg">
+      <p className="text-xs text-muted-foreground/60 mb-3 italic">Click the checkbox to toggle</p>
       <div className="flex flex-wrap items-center gap-6">
         <label className="flex items-center gap-2 cursor-pointer">
           <Checkbox checked={checked} onChange={() => onChange(!checked)} />
@@ -426,6 +429,7 @@ function CheckboxShowcase({ checked, onChange }: { checked: boolean; onChange: (
 function RadioGroupShowcase({ value, onChange }: { value: string; onChange: (v: string) => void }) {
   return (
     <Card variant="outlined" padding="lg">
+      <p className="text-xs text-muted-foreground/60 mb-3 italic">Click an option to select it</p>
       <RadioGroup
         name="gallery-radio"
         options={[
@@ -447,6 +451,7 @@ function RadioGroupShowcase({ value, onChange }: { value: string; onChange: (v: 
 function SwitchShowcase({ checked, onChange }: { checked: boolean; onChange: (v: boolean) => void }) {
   return (
     <Card variant="outlined" padding="lg">
+      <p className="text-xs text-muted-foreground/60 mb-3 italic">Click the switch to toggle</p>
       <div className="flex flex-wrap items-center gap-6">
         <div className="flex items-center gap-3">
           <Switch checked={checked} onChange={() => onChange(!checked)} />
@@ -529,6 +534,7 @@ function SpinnerShowcase() {
 function TooltipShowcase() {
   return (
     <Card variant="outlined" padding="lg">
+      <p className="text-xs text-muted-foreground/60 mb-3 italic">Hover over each button to see the tooltip</p>
       <div className="flex flex-wrap gap-3">
         <Tooltip content="Tooltip on top" position="top"><Button variant="outline">Top</Button></Tooltip>
         <Tooltip content="Tooltip on bottom" position="bottom"><Button variant="outline">Bottom</Button></Tooltip>
@@ -546,6 +552,7 @@ function TooltipShowcase() {
 function TabsShowcase() {
   return (
     <Card variant="outlined" padding="lg">
+      <p className="text-xs text-muted-foreground/60 mb-3 italic">Click a tab to switch content</p>
       <div className="space-y-4">
         <div>
           <p className="text-xs text-muted-foreground mb-2">Line variant</p>
@@ -566,6 +573,7 @@ function TabsShowcase() {
 function AccordionShowcase() {
   return (
     <Card variant="outlined" padding="lg">
+      <p className="text-xs text-muted-foreground/60 mb-3 italic">Click an item to expand</p>
       <div className="max-w-lg">
         <Accordion items={accordionItems} variant="default" />
       </div>

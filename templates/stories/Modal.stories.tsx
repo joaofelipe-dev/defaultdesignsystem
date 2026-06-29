@@ -37,6 +37,13 @@ export default meta;
 type Story = StoryObj<typeof Modal>;
 
 export const Default: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story: 'Click the button to open the modal. Click outside or press Esc to close.',
+      },
+    },
+  },
   render: () => {
     const [open, setOpen] = useState(false);
     return (

@@ -11,6 +11,13 @@ const meta: Meta<typeof Tabs> = {
   title: 'Components/Tabs',
   component: Tabs,
   tags: ['autodocs'],
+  parameters: {
+    docs: {
+      description: {
+        component: 'Click a tab to switch its content.',
+      },
+    },
+  },
   argTypes: {
     variant: {
       control: 'select',
