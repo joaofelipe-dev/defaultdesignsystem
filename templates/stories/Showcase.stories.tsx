@@ -20,7 +20,11 @@ import { Avatar } from '../ui/Avatar';
 
 const CATEGORIES = [
   { id: 'actions', label: 'Actions', components: ['Button', 'Badge'] },
-  { id: 'forms', label: 'Forms', components: ['Input', 'Select', 'Checkbox', 'RadioGroup', 'Switch'] },
+  {
+    id: 'forms',
+    label: 'Forms',
+    components: ['Input', 'Select', 'Checkbox', 'RadioGroup', 'Switch'],
+  },
   { id: 'feedback', label: 'Feedback', components: ['Toast', 'Modal', 'Spinner', 'Tooltip'] },
   { id: 'navigation', label: 'Navigation', components: ['Tabs', 'Accordion'] },
   { id: 'data', label: 'Data', components: ['Table'] },
@@ -35,22 +39,25 @@ function useIntersection(threshold = 0.15) {
     return () => observerRef.current?.disconnect();
   }, []);
 
-  const observe = useCallback((_id: string, el: HTMLElement | null) => {
-    if (!el) return;
-    if (!observerRef.current) {
-      observerRef.current = new IntersectionObserver(
-        (entries) => {
-          entries.forEach((entry) => {
-            if (entry.isIntersecting) {
-              setVisible((prev) => new Set(prev).add(entry.target.id));
-            }
-          });
-        },
-        { threshold }
-      );
-    }
-    observerRef.current.observe(el);
-  }, [threshold]);
+  const observe = useCallback(
+    (_id: string, el: HTMLElement | null) => {
+      if (!el) return;
+      if (!observerRef.current) {
+        observerRef.current = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                setVisible((prev) => new Set(prev).add(entry.target.id));
+              }
+            });
+          },
+          { threshold },
+        );
+      }
+      observerRef.current.observe(el);
+    },
+    [threshold],
+  );
 
   return { visible, observe };
 }
@@ -67,10 +74,12 @@ function CodeBlock({ code }: { code: string }) {
 
   return (
     <div className="relative group">
-      <pre className="bg-zinc-900 text-zinc-100 text-xs leading-relaxed p-3 pr-10 rounded-lg overflow-x-auto">{code}</pre>
+      <pre className="bg-zinc-900 text-zinc-100 text-xs leading-relaxed p-3 pr-10 rounded-lg overflow-x-auto">
+        {code}
+      </pre>
       <button
         onClick={copy}
-        className="absolute top-2 right-2 px-2 py-1 text-xs rounded bg-zinc-700 text-zinc-300 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-zinc-600"
+        className="absolute top-2 right-2 px-2 py-1 text-xs rounded bg-zinc-700 text-zinc-300 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity hover:bg-zinc-600"
       >
         {copied ? 'Copied!' : 'Copy'}
       </button>
@@ -89,15 +98,47 @@ function useDarkMode() {
 }
 
 const accordionItems = [
-  { id: 'faq1', title: 'What is this design system?', content: 'A set of React components styled with Tailwind CSS, copied directly to your project via CLI. Full ownership, zero vendor lock-in.' },
-  { id: 'faq2', title: 'How do I customize colors?', content: 'All colors are CSS variables in globals.css. Change the HSL values to create your own theme.' },
-  { id: 'faq3', title: 'Does it support dark mode?', content: 'Yes! Add the .dark class to &lt;html&gt; and dark variables apply automatically.' },
+  {
+    id: 'faq1',
+    title: 'What is this design system?',
+    content:
+      'A set of React components styled with Tailwind CSS, copied directly to your project via CLI. Full ownership, zero vendor lock-in.',
+  },
+  {
+    id: 'faq2',
+    title: 'How do I customize colors?',
+    content:
+      'All colors are CSS variables in globals.css. Change the HSL values to create your own theme.',
+  },
+  {
+    id: 'faq3',
+    title: 'Does it support dark mode?',
+    content: 'Yes! Add the .dark class to &lt;html&gt; and dark variables apply automatically.',
+  },
 ];
 
 const tabs = [
-  { id: 'tab1', label: 'Preview', content: <div className="py-4 text-foreground">Preview tab content. See your components in action.</div> },
-  { id: 'tab2', label: 'Code', content: <div className="py-4 text-foreground">Code tab content. Usage examples and snippets.</div> },
-  { id: 'tab3', label: 'Props', content: <div className="py-4 text-foreground">Props tab content. Full API reference.</div> },
+  {
+    id: 'tab1',
+    label: 'Preview',
+    content: (
+      <div className="py-4 text-foreground">
+        Preview tab content. See your components in action.
+      </div>
+    ),
+  },
+  {
+    id: 'tab2',
+    label: 'Code',
+    content: (
+      <div className="py-4 text-foreground">Code tab content. Usage examples and snippets.</div>
+    ),
+  },
+  {
+    id: 'tab3',
+    label: 'Props',
+    content: <div className="py-4 text-foreground">Props tab content. Full API reference.</div>,
+  },
 ];
 
 const tableData = [
@@ -106,7 +147,19 @@ const tableData = [
   { name: 'Carlos Lima', email: 'carlos@example.com', role: 'Viewer', status: 'Inactive' },
 ];
 
-function Section({ id, title, children, observe, visible }: { id: string; title: string; children: React.ReactNode; observe: (id: string, el: HTMLElement | null) => void; visible: boolean }) {
+function Section({
+  id,
+  title,
+  children,
+  observe,
+  visible,
+}: {
+  id: string;
+  title: string;
+  children: React.ReactNode;
+  observe: (id: string, el: HTMLElement | null) => void;
+  visible: boolean;
+}) {
   return (
     <section
       id={id}
@@ -115,7 +168,7 @@ function Section({ id, title, children, observe, visible }: { id: string; title:
       className="scroll-mt-20 opacity-0 translate-y-4 transition-all duration-700 ease-out data-[visible=true]:opacity-100 data-[visible=true]:translate-y-0"
     >
       <div className="mb-8">
-        <h2 className="text-2xl font-bold text-foreground">{title}</h2>
+        <h2 className="text-xl sm:text-2xl font-bold text-foreground">{title}</h2>
         <Divider spacing="sm" />
       </div>
       {children}
@@ -126,7 +179,10 @@ function Section({ id, title, children, observe, visible }: { id: string; title:
 function Gallery() {
   const { dark, setDark } = useDarkMode();
   const [modalOpen, setModalOpen] = useState(false);
-  const [toasts, setToasts] = useState<{ id: number; variant: 'success' | 'error' | 'warning' | 'info'; message: string }[]>([]);
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const [toasts, setToasts] = useState<
+    { id: number; variant: 'success' | 'error' | 'warning' | 'info'; message: string }[]
+  >([]);
   const [switchChecked, setSwitchChecked] = useState(false);
   const [checkboxChecked, setCheckboxChecked] = useState(false);
   const [radioValue, setRadioValue] = useState('option1');
@@ -171,7 +227,7 @@ function Gallery() {
           if (entry.isIntersecting) setActiveSection(entry.target.id);
         });
       },
-      { rootMargin: '-40% 0px -55% 0px' }
+      { rootMargin: '-40% 0px -55% 0px' },
     );
     CATEGORIES.flatMap((c) => c.components).forEach((id) => {
       const el = document.getElementById(id.toLowerCase());
@@ -183,11 +239,66 @@ function Gallery() {
   return (
     <div className="min-h-screen bg-background text-foreground">
       {toasts.map((t) => (
-        <Toast key={t.id} variant={t.variant} message={t.message} duration={3000} onClose={() => removeToast(t.id)} />
+        <Toast
+          key={t.id}
+          variant={t.variant}
+          message={t.message}
+          duration={3000}
+          onClose={() => removeToast(t.id)}
+        />
       ))}
 
+      {/* Mobile nav toggle */}
+      <button
+        onClick={() => setMobileNavOpen(true)}
+        className="lg:hidden fixed top-4 left-4 z-40 p-2 rounded-md bg-zinc-900 text-zinc-300"
+        aria-label="Open navigation"
+      >
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <path d="M2.5 5h15M2.5 10h15M2.5 15h15" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+        </svg>
+      </button>
+
+      {/* Mobile nav overlay */}
+      {mobileNavOpen && (
+        <div className="lg:hidden fixed inset-0 z-40" onClick={() => setMobileNavOpen(false)}>
+          <div className="absolute inset-0 bg-black/50" />
+          <aside className="absolute left-0 top-0 h-full w-64 bg-zinc-950 text-zinc-300 border-r border-zinc-800 shadow-2xl animate-in slide-in-from-left">
+            <div className="flex items-center justify-between px-5 pt-6 pb-4 border-b border-zinc-800">
+              <div>
+                <p className="text-sm font-semibold text-white tracking-tight">defaultDesignSystem</p>
+                <p className="text-xs text-zinc-500 mt-0.5">17 components</p>
+              </div>
+              <button onClick={() => setMobileNavOpen(false)} className="text-zinc-400 hover:text-white p-1">
+                <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                  <path d="M4.5 4.5l9 9M13.5 4.5l-9 9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                </svg>
+              </button>
+            </div>
+            <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-4 text-sm">
+              {CATEGORIES.map((cat) => (
+                <div key={cat.id}>
+                  <p className="text-[10px] font-semibold uppercase tracking-widest text-zinc-600 px-2 mb-1.5">
+                    {cat.label}
+                  </p>
+                  {cat.components.map((comp) => (
+                    <button
+                      key={comp}
+                      onClick={() => { scrollTo(comp.toLowerCase()); setMobileNavOpen(false); }}
+                      className="block w-full text-left px-2 py-1 rounded text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors text-xs"
+                    >
+                      {comp}
+                    </button>
+                  ))}
+                </div>
+              ))}
+            </nav>
+          </aside>
+        </div>
+      )}
+
       <div className="flex">
-        <aside className="hidden lg:flex flex-col fixed left-0 top-0 h-full w-56 bg-zinc-950 text-zinc-300 z-50 border-r border-zinc-800">
+        <aside className="hidden lg:flex flex-col fixed left-0 top-0 h-full w-56 bg-zinc-950 text-zinc-300 z-30 border-r border-zinc-800">
           <div className="px-5 pt-6 pb-4 border-b border-zinc-800">
             <p className="text-sm font-semibold text-white tracking-tight">defaultDesignSystem</p>
             <p className="text-xs text-zinc-500 mt-0.5">17 components</p>
@@ -195,7 +306,9 @@ function Gallery() {
           <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-4 text-sm scrollbar-thin">
             {CATEGORIES.map((cat) => (
               <div key={cat.id}>
-                <p className="text-[10px] font-semibold uppercase tracking-widest text-zinc-600 px-2 mb-1.5">{cat.label}</p>
+                <p className="text-[10px] font-semibold uppercase tracking-widest text-zinc-600 px-2 mb-1.5">
+                  {cat.label}
+                </p>
                 {cat.components.map((comp) => (
                   <button
                     key={comp}
@@ -222,30 +335,50 @@ function Gallery() {
         </aside>
 
         <main className="flex-1 lg:ml-56">
-          <div className="max-w-5xl mx-auto px-6 py-12 lg:py-16">
+          <div className="max-w-5xl mx-auto px-4 sm:px-6 py-12 lg:py-16">
             <div className="text-center mb-16">
               <h1 className="text-4xl lg:text-5xl font-bold tracking-tight text-foreground mb-3">
                 defaultDesignSystem
               </h1>
               <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-6">
-                React components styled with Tailwind CSS. Copied to your project via CLI.
-                Full ownership, zero vendor lock-in.
+                React components styled with Tailwind CSS. Copied to your project via CLI. Full
+                ownership, zero vendor lock-in.
               </p>
-              <p className="text-xs text-muted-foreground/40">Design System by <strong className="text-muted-foreground/60 font-medium">João Felipe</strong></p>
+              <p className="text-xs text-muted-foreground/40 mb-6">
+                Design System by{' '}
+                <strong className="text-muted-foreground/60 font-medium">
+                  <a href="https://www.linkedin.com/in/joao-felipedev/">
+                    João Felipe
+                  </a>
+                </strong>
+              </p>
               <div className="flex flex-wrap justify-center gap-2">
-                <Badge variant="soft" color="primary">React 19</Badge>
-                <Badge variant="soft" color="primary">Tailwind CSS</Badge>
-                <Badge variant="soft" color="primary">TypeScript</Badge>
-                <Badge variant="soft" color="primary">Accessible</Badge>
-                <Badge variant="soft" color="primary">17 Components</Badge>
+                <Badge variant="soft" color="primary">
+                  React 19
+                </Badge>
+                <Badge variant="soft" color="primary">
+                  Tailwind CSS
+                </Badge>
+                <Badge variant="soft" color="primary">
+                  TypeScript
+                </Badge>
+                <Badge variant="soft" color="primary">
+                  Accessible
+                </Badge>
+                <Badge variant="soft" color="primary">
+                  17 Components
+                </Badge>
               </div>
             </div>
 
-            <div className="lg:hidden flex justify-center mb-10 gap-2">
-              <Button size="sm" variant={dark ? 'outline' : 'default'} onClick={() => setDark(!dark)}>
-                {dark ? 'Light mode' : 'Dark mode'}
-              </Button>
-            </div>
+            {/* Dark mode FAB — mobile */}
+            <button
+              onClick={() => setDark(!dark)}
+              className="lg:hidden fixed bottom-6 right-6 z-30 p-3 rounded-full bg-zinc-900 text-zinc-300 shadow-lg"
+              aria-label={dark ? 'Switch to light mode' : 'Switch to dark mode'}
+            >
+              <span className="text-lg leading-none">{dark ? '\u2600' : '\uD83C\uDF19'}</span>
+            </button>
 
             {CATEGORIES.map((cat) => (
               <div key={cat.id} id={cat.id} className="mb-16">
@@ -253,16 +386,32 @@ function Gallery() {
                   const id = comp.toLowerCase();
                   return (
                     <div key={comp} id={id}>
-                      <Section id={`${id}-content`} title={comp} observe={observe} visible={visible.has(`${id}-content`)}>
+                      <Section
+                        id={`${id}-content`}
+                        title={comp}
+                        observe={observe}
+                        visible={visible.has(`${id}-content`)}
+                      >
                         {comp === 'Button' && <ButtonShowcase />}
                         {comp === 'Badge' && <BadgeShowcase />}
                         {comp === 'Input' && <InputShowcase />}
                         {comp === 'Select' && <SelectShowcase />}
-                        {comp === 'Checkbox' && <CheckboxShowcase checked={checkboxChecked} onChange={setCheckboxChecked} />}
-                        {comp === 'RadioGroup' && <RadioGroupShowcase value={radioValue} onChange={setRadioValue} />}
-                        {comp === 'Switch' && <SwitchShowcase checked={switchChecked} onChange={setSwitchChecked} />}
+                        {comp === 'Checkbox' && (
+                          <CheckboxShowcase
+                            checked={checkboxChecked}
+                            onChange={setCheckboxChecked}
+                          />
+                        )}
+                        {comp === 'RadioGroup' && (
+                          <RadioGroupShowcase value={radioValue} onChange={setRadioValue} />
+                        )}
+                        {comp === 'Switch' && (
+                          <SwitchShowcase checked={switchChecked} onChange={setSwitchChecked} />
+                        )}
                         {comp === 'Toast' && <ToastShowcase onAdd={addToast} />}
-                        {comp === 'Modal' && <ModalShowcase open={modalOpen} onOpen={setModalOpen} />}
+                        {comp === 'Modal' && (
+                          <ModalShowcase open={modalOpen} onOpen={setModalOpen} />
+                        )}
                         {comp === 'Spinner' && <SpinnerShowcase />}
                         {comp === 'Tooltip' && <TooltipShowcase />}
                         {comp === 'Tabs' && <TabsShowcase />}
@@ -285,27 +434,49 @@ function Gallery() {
 }
 
 function ButtonShowcase() {
-  const [variant, setVariant] = useState<'default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'link'>('default');
+  const [variant, setVariant] = useState<
+    'default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'link'
+  >('default');
   const [size, setSize] = useState<'sm' | 'default' | 'lg'>('default');
 
   return (
-    <Card variant="outlined" padding="lg">
-      <p className="text-xs text-muted-foreground/60 mb-3 italic">Click the pills above to change variant and size</p>
+    <Card variant="outlined" padding="md">
+      <p className="text-xs text-muted-foreground/60 mb-3 italic">
+        Click the pills above to change variant and size
+      </p>
       <div className="flex flex-wrap gap-2 mb-4">
         <div className="flex gap-1 flex-wrap">
-          {(['default', 'outline', 'secondary', 'ghost', 'link', 'destructive'] as const).map((v) => (
-            <button key={v} onClick={() => setVariant(v)} className={`px-2.5 py-1 text-xs rounded-md transition-all ${variant === v ? 'bg-primary text-primary-foreground shadow-sm' : 'bg-muted text-muted-foreground hover:bg-accent'}`}>{v}</button>
-          ))}
+          {(['default', 'outline', 'secondary', 'ghost', 'link', 'destructive'] as const).map(
+            (v) => (
+              <button
+                key={v}
+                onClick={() => setVariant(v)}
+                className={`px-2.5 py-1 text-xs rounded-md transition-all ${variant === v ? 'bg-primary text-primary-foreground shadow-sm' : 'bg-muted text-muted-foreground hover:bg-accent'}`}
+              >
+                {v}
+              </button>
+            ),
+          )}
         </div>
         <div className="flex gap-1 flex-wrap">
           {(['sm', 'default', 'lg'] as const).map((s) => (
-            <button key={s} onClick={() => setSize(s)} className={`px-2.5 py-1 text-xs rounded-md transition-all ${size === s ? 'bg-primary text-primary-foreground shadow-sm' : 'bg-muted text-muted-foreground hover:bg-accent'}`}>{s}</button>
+            <button
+              key={s}
+              onClick={() => setSize(s)}
+              className={`px-2.5 py-1 text-xs rounded-md transition-all ${size === s ? 'bg-primary text-primary-foreground shadow-sm' : 'bg-muted text-muted-foreground hover:bg-accent'}`}
+            >
+              {s}
+            </button>
           ))}
         </div>
       </div>
       <div className="flex flex-wrap items-center gap-3">
-        <Button variant={variant} size={size}>Button</Button>
-        <Button variant={variant} size={size} disabled>Disabled</Button>
+        <Button variant={variant} size={size}>
+          Button
+        </Button>
+        <Button variant={variant} size={size} disabled>
+          Disabled
+        </Button>
       </div>
       <div className="mt-3">
         <CodeBlock code={`<Button variant="${variant}" size="${size}">Button</Button>`} />
@@ -316,13 +487,15 @@ function ButtonShowcase() {
 
 function BadgeShowcase() {
   return (
-    <Card variant="outlined" padding="lg">
+    <Card variant="outlined" padding="md">
       <div className="space-y-4">
         <div>
           <p className="text-xs text-muted-foreground mb-2">Solid</p>
           <div className="flex flex-wrap gap-2">
             {(['primary', 'success', 'warning', 'danger'] as const).map((c) => (
-              <Badge key={c} variant="solid" color={c}>{c}</Badge>
+              <Badge key={c} variant="solid" color={c}>
+                {c}
+              </Badge>
             ))}
           </div>
         </div>
@@ -330,7 +503,9 @@ function BadgeShowcase() {
           <p className="text-xs text-muted-foreground mb-2">Outline</p>
           <div className="flex flex-wrap gap-2">
             {(['primary', 'success', 'warning', 'danger'] as const).map((c) => (
-              <Badge key={c} variant="outline" color={c}>{c}</Badge>
+              <Badge key={c} variant="outline" color={c}>
+                {c}
+              </Badge>
             ))}
           </div>
         </div>
@@ -338,7 +513,9 @@ function BadgeShowcase() {
           <p className="text-xs text-muted-foreground mb-2">Soft</p>
           <div className="flex flex-wrap gap-2">
             {(['primary', 'success', 'warning', 'danger'] as const).map((c) => (
-              <Badge key={c} variant="soft" color={c}>{c}</Badge>
+              <Badge key={c} variant="soft" color={c}>
+                {c}
+              </Badge>
             ))}
           </div>
         </div>
@@ -362,11 +539,19 @@ function InputShowcase() {
   const [variant, setVariant] = useState<'default' | 'filled' | 'outline' | 'ghost'>('default');
 
   return (
-    <Card variant="outlined" padding="lg">
-      <p className="text-xs text-muted-foreground/60 mb-3 italic">Click the pills above to change variant</p>
+    <Card variant="outlined" padding="md">
+      <p className="text-xs text-muted-foreground/60 mb-3 italic">
+        Click the pills above to change variant
+      </p>
       <div className="flex gap-1 flex-wrap mb-4">
         {(['default', 'filled', 'outline', 'ghost'] as const).map((v) => (
-          <button key={v} onClick={() => setVariant(v)} className={`px-2.5 py-1 text-xs rounded-md transition-all ${variant === v ? 'bg-primary text-primary-foreground shadow-sm' : 'bg-muted text-muted-foreground hover:bg-accent'}`}>{v}</button>
+          <button
+            key={v}
+            onClick={() => setVariant(v)}
+            className={`px-2.5 py-1 text-xs rounded-md transition-all ${variant === v ? 'bg-primary text-primary-foreground shadow-sm' : 'bg-muted text-muted-foreground hover:bg-accent'}`}
+          >
+            {v}
+          </button>
         ))}
       </div>
       <div className="space-y-3 max-w-sm">
@@ -384,7 +569,7 @@ function InputShowcase() {
 
 function SelectShowcase() {
   return (
-    <Card variant="outlined" padding="lg">
+    <Card variant="outlined" padding="md">
       <div className="flex flex-wrap gap-3 max-w-xs">
         <Select className="max-w-[200px]">
           <option>Default</option>
@@ -402,9 +587,15 @@ function SelectShowcase() {
   );
 }
 
-function CheckboxShowcase({ checked, onChange }: { checked: boolean; onChange: (v: boolean) => void }) {
+function CheckboxShowcase({
+  checked,
+  onChange,
+}: {
+  checked: boolean;
+  onChange: (v: boolean) => void;
+}) {
   return (
-    <Card variant="outlined" padding="lg">
+    <Card variant="outlined" padding="md">
       <p className="text-xs text-muted-foreground/60 mb-3 italic">Click the checkbox to toggle</p>
       <div className="flex flex-wrap items-center gap-6">
         <label className="flex items-center gap-2 cursor-pointer">
@@ -429,7 +620,7 @@ function CheckboxShowcase({ checked, onChange }: { checked: boolean; onChange: (
 
 function RadioGroupShowcase({ value, onChange }: { value: string; onChange: (v: string) => void }) {
   return (
-    <Card variant="outlined" padding="lg">
+    <Card variant="outlined" padding="md">
       <p className="text-xs text-muted-foreground/60 mb-3 italic">Click an option to select it</p>
       <RadioGroup
         name="gallery-radio"
@@ -443,15 +634,23 @@ function RadioGroupShowcase({ value, onChange }: { value: string; onChange: (v: 
         orientation="horizontal"
       />
       <div className="mt-3">
-        <CodeBlock code={`<RadioGroup name="group" options={[\n  { label: "Option 1", value: "opt1" },\n]} />`} />
+        <CodeBlock
+          code={`<RadioGroup name="group" options={[\n  { label: "Option 1", value: "opt1" },\n]} />`}
+        />
       </div>
     </Card>
   );
 }
 
-function SwitchShowcase({ checked, onChange }: { checked: boolean; onChange: (v: boolean) => void }) {
+function SwitchShowcase({
+  checked,
+  onChange,
+}: {
+  checked: boolean;
+  onChange: (v: boolean) => void;
+}) {
   return (
-    <Card variant="outlined" padding="lg">
+    <Card variant="outlined" padding="md">
       <p className="text-xs text-muted-foreground/60 mb-3 italic">Click the switch to toggle</p>
       <div className="flex flex-wrap items-center gap-6">
         <div className="flex items-center gap-3">
@@ -474,14 +673,26 @@ function SwitchShowcase({ checked, onChange }: { checked: boolean; onChange: (v:
   );
 }
 
-function ToastShowcase({ onAdd }: { onAdd: (variant: 'success' | 'error' | 'warning' | 'info', msg: string) => void }) {
+function ToastShowcase({
+  onAdd,
+}: {
+  onAdd: (variant: 'success' | 'error' | 'warning' | 'info', msg: string) => void;
+}) {
   return (
-    <Card variant="outlined" padding="lg">
+    <Card variant="outlined" padding="md">
       <div className="flex flex-wrap gap-2">
-        <Button onClick={() => onAdd('success', 'Operation completed successfully!')}>Success</Button>
-        <Button variant="destructive" onClick={() => onAdd('error', 'Error processing request.')}>Error</Button>
-        <Button variant="secondary" onClick={() => onAdd('warning', 'Resource running low.')}>Warning</Button>
-        <Button variant="outline" onClick={() => onAdd('info', 'New version available.')}>Info</Button>
+        <Button onClick={() => onAdd('success', 'Operation completed successfully!')}>
+          Success
+        </Button>
+        <Button variant="destructive" onClick={() => onAdd('error', 'Error processing request.')}>
+          Error
+        </Button>
+        <Button variant="secondary" onClick={() => onAdd('warning', 'Resource running low.')}>
+          Warning
+        </Button>
+        <Button variant="outline" onClick={() => onAdd('info', 'New version available.')}>
+          Info
+        </Button>
       </div>
       <div className="mt-3">
         <CodeBlock code={`<Toast variant="success" message="Done!" duration={3000} />`} />
@@ -492,14 +703,24 @@ function ToastShowcase({ onAdd }: { onAdd: (variant: 'success' | 'error' | 'warn
 
 function ModalShowcase({ open, onOpen }: { open: boolean; onOpen: (v: boolean) => void }) {
   return (
-    <Card variant="outlined" padding="lg">
+    <Card variant="outlined" padding="md">
       <Button onClick={() => onOpen(true)}>Open Modal</Button>
-      <Modal open={open} onClose={() => onOpen(false)} title="Modal Title" description="Optional description" size="md">
-        <p className="text-foreground mb-4">Modal content goes here. Click outside or press Esc to close.</p>
+      <Modal
+        open={open}
+        onClose={() => onOpen(false)}
+        title="Modal Title"
+        description="Optional description"
+        size="md"
+      >
+        <p className="text-foreground mb-4">
+          Modal content goes here. Click outside or press Esc to close.
+        </p>
         <Button onClick={() => onOpen(false)}>Close</Button>
       </Modal>
       <div className="mt-3">
-        <CodeBlock code={`<Modal open={open} onClose={() => setOpen(false)} title="Title">\n  <p>Content</p>\n</Modal>`} />
+        <CodeBlock
+          code={`<Modal open={open} onClose={() => setOpen(false)} title="Title">\n  <p>Content</p>\n</Modal>`}
+        />
       </div>
     </Card>
   );
@@ -507,7 +728,7 @@ function ModalShowcase({ open, onOpen }: { open: boolean; onOpen: (v: boolean) =
 
 function SpinnerShowcase() {
   return (
-    <Card variant="outlined" padding="lg">
+    <Card variant="outlined" padding="md">
       <div className="space-y-4">
         <div>
           <p className="text-xs text-muted-foreground mb-2">Circular</p>
@@ -534,17 +755,31 @@ function SpinnerShowcase() {
 
 function TooltipShowcase() {
   return (
-    <Card variant="outlined" padding="lg">
-      <p className="text-xs text-muted-foreground/60 mb-3 italic">Hover over each button to see the tooltip</p>
+    <Card variant="outlined" padding="md">
+      <p className="text-xs text-muted-foreground/60 mb-3 italic">
+        Hover over each button to see the tooltip
+      </p>
       <div className="flex flex-wrap gap-3">
-        <Tooltip content="Tooltip on top" position="top"><Button variant="outline">Top</Button></Tooltip>
-        <Tooltip content="Tooltip on bottom" position="bottom"><Button variant="outline">Bottom</Button></Tooltip>
-        <Tooltip content="Tooltip on left" position="left"><Button variant="outline">Left</Button></Tooltip>
-        <Tooltip content="Tooltip on right" position="right"><Button variant="outline">Right</Button></Tooltip>
-        <Tooltip content="Disabled tooltip" disabled><Button variant="ghost">Disabled</Button></Tooltip>
+        <Tooltip content="Tooltip on top" position="top">
+          <Button variant="outline">Top</Button>
+        </Tooltip>
+        <Tooltip content="Tooltip on bottom" position="bottom">
+          <Button variant="outline">Bottom</Button>
+        </Tooltip>
+        <Tooltip content="Tooltip on left" position="left">
+          <Button variant="outline">Left</Button>
+        </Tooltip>
+        <Tooltip content="Tooltip on right" position="right">
+          <Button variant="outline">Right</Button>
+        </Tooltip>
+        <Tooltip content="Disabled tooltip" disabled>
+          <Button variant="ghost">Disabled</Button>
+        </Tooltip>
       </div>
       <div className="mt-3">
-        <CodeBlock code={`<Tooltip content="Tooltip text" position="top">\n  <Button>Hover me</Button>\n</Tooltip>`} />
+        <CodeBlock
+          code={`<Tooltip content="Tooltip text" position="top">\n  <Button>Hover me</Button>\n</Tooltip>`}
+        />
       </div>
     </Card>
   );
@@ -552,7 +787,7 @@ function TooltipShowcase() {
 
 function TabsShowcase() {
   return (
-    <Card variant="outlined" padding="lg">
+    <Card variant="outlined" padding="md">
       <p className="text-xs text-muted-foreground/60 mb-3 italic">Click a tab to switch content</p>
       <div className="space-y-4">
         <div>
@@ -573,7 +808,7 @@ function TabsShowcase() {
 
 function AccordionShowcase() {
   return (
-    <Card variant="outlined" padding="lg">
+    <Card variant="outlined" padding="md">
       <p className="text-xs text-muted-foreground/60 mb-3 italic">Click an item to expand</p>
       <div className="max-w-lg">
         <Accordion items={accordionItems} variant="default" />
@@ -587,7 +822,7 @@ function AccordionShowcase() {
 
 function TableShowcase() {
   return (
-    <Card variant="outlined" padding="lg">
+    <Card variant="outlined" padding="md">
       <Table variant="simple">
         <thead>
           <tr>
@@ -602,14 +837,24 @@ function TableShowcase() {
             <tr key={row.name}>
               <td className="text-foreground">{row.name}</td>
               <td className="text-muted-foreground">{row.email}</td>
-              <td><Badge color="primary" size="sm">{row.role}</Badge></td>
-              <td><Badge color={row.status === 'Active' ? 'success' : 'warning'} size="sm">{row.status}</Badge></td>
+              <td>
+                <Badge color="primary" size="sm">
+                  {row.role}
+                </Badge>
+              </td>
+              <td>
+                <Badge color={row.status === 'Active' ? 'success' : 'warning'} size="sm">
+                  {row.status}
+                </Badge>
+              </td>
             </tr>
           ))}
         </tbody>
       </Table>
       <div className="mt-3">
-        <CodeBlock code={`<Table variant="simple">\n  <thead>...</thead>\n  <tbody>...</tbody>\n</Table>`} />
+        <CodeBlock
+          code={`<Table variant="simple">\n  <thead>...</thead>\n  <tbody>...</tbody>\n</Table>`}
+        />
       </div>
     </Card>
   );
@@ -617,7 +862,7 @@ function TableShowcase() {
 
 function CardShowcase() {
   return (
-    <Card variant="outlined" padding="lg">
+    <Card variant="outlined" padding="md">
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <Card variant="default" padding="md">
           <p className="text-foreground font-medium">Default</p>
@@ -641,7 +886,7 @@ function CardShowcase() {
 
 function DividerShowcase() {
   return (
-    <Card variant="outlined" padding="lg">
+    <Card variant="outlined" padding="md">
       <div className="max-w-sm">
         <p className="text-foreground text-sm">Above solid divider</p>
         <Divider variant="solid" spacing="md" />
@@ -664,7 +909,7 @@ function DividerShowcase() {
 
 function AvatarShowcase() {
   return (
-    <Card variant="outlined" padding="lg">
+    <Card variant="outlined" padding="md">
       <div className="space-y-4">
         <div>
           <p className="text-xs text-muted-foreground mb-2">Sizes</p>

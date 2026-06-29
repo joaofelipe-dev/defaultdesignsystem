@@ -66,7 +66,7 @@ export const AllPositions: Story = {
   render: () => (
     <div className="space-y-4">
       <p className="text-xs text-muted-foreground/60 italic">Hover over each button to see the tooltip</p>
-      <div className="flex items-center justify-center gap-16 p-16">
+      <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-8 lg:gap-16 p-4 sm:p-8 lg:p-16">
         <Tooltip content="Top tooltip" position="top">
           <Button>Top</Button>
         </Tooltip>

@@ -81,7 +81,7 @@ export function Tabs({
           'flex',
           orientation === 'vertical'
             ? 'flex-col space-y-1'
-            : 'flex-row space-x-1 border-b border-border',
+            : 'flex-row space-x-1 border-b border-border overflow-x-auto',
           variant === 'solid' &&
             orientation === 'horizontal' &&
             'border-none p-1 bg-surface rounded-md',

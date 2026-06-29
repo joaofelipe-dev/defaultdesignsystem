@@ -69,7 +69,7 @@ export function RadioGroup({
       aria-orientation={orientation}
       className={cn(
         'flex',
-        orientation === 'vertical' ? 'flex-col space-y-2' : 'flex-row space-x-4',
+        orientation === 'vertical' ? 'flex-col space-y-2' : 'flex-row flex-wrap gap-x-4',
         className,
       )}
       onKeyDown={handleKeyDown}

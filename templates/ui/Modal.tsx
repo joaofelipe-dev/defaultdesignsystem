@@ -111,18 +111,19 @@ export function Modal({
         aria-modal="true"
         aria-labelledby={title ? titleId : undefined}
         aria-describedby={description ? descId : undefined}
-        className={cn(
-          'bg-background rounded-lg shadow-lg overflow-hidden',
-          {
-            'w-full max-w-sm': size === 'sm',
-            'w-full max-w-md': size === 'md',
-            'w-full max-w-lg': size === 'lg',
-            'w-full max-w-xl': size === 'xl',
-            'w-full h-full max-w-none rounded-none': size === 'full' || variant === 'fullscreen',
-            'mx-auto mt-10': variant === 'default' && size !== 'full',
-          },
-          className,
-        )}
+          className={cn(
+            'bg-background rounded-lg shadow-lg overflow-hidden',
+            {
+              'w-full max-w-sm': size === 'sm',
+              'w-full max-w-md': size === 'md',
+              'w-full max-w-lg': size === 'lg',
+              'w-full max-w-xl': size === 'xl',
+              'w-full h-full max-w-none rounded-none': size === 'full' || variant === 'fullscreen',
+              'mx-auto mt-10': variant === 'default' && size !== 'full',
+              'mx-4': variant === 'centered' && size !== 'full',
+            },
+            className,
+          )}
         onClick={(e) => e.stopPropagation()}
       >
         {(title || description) && (

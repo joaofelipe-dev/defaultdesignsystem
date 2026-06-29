@@ -64,7 +64,7 @@ export function Tooltip({
         <div
           id={`${uid}-tooltip`}
           role="tooltip"
-          className={cn('absolute z-50 px-2 py-1 text-sm rounded shadow-md whitespace-nowrap', {
+          className={cn('absolute z-50 px-2 py-1 text-sm rounded shadow-md whitespace-nowrap max-w-[80vw]', {
             'bg-tooltip text-tooltip-foreground': variant === 'dark',
             'bg-tooltip-light text-tooltip-light-foreground border border-tooltip-light-border': variant === 'light',
             'bottom-full left-1/2 -translate-x-1/2 mb-2': position === 'top',

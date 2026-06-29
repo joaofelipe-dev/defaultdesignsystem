@@ -60,7 +60,7 @@ export const White: Story = {
 
 export const AllVariants: Story = {
   render: () => (
-    <div className="flex items-center gap-8">
+    <div className="flex flex-wrap items-center gap-4 sm:gap-8">
       <div className="flex flex-col items-center gap-2">
         <span className="text-xs text-muted-foreground">Circular</span>
         <Spinner variant="circular" />

@@ -69,7 +69,7 @@ export function Toast({
       role="alert"
       aria-live="polite"
       className={cn(
-        'fixed z-50 flex items-center justify-between px-4 py-3 rounded shadow-lg min-w-[300px]',
+        'fixed z-50 flex items-center justify-between px-4 py-3 rounded shadow-lg min-w-[300px] max-w-[calc(100vw-32px)]',
         variantStyles[variant],
         positionStyles[position],
         className,
