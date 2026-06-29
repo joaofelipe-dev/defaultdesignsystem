@@ -28,10 +28,10 @@ describe('Avatar', () => {
 
   it('applies size classes', () => {
     const { rerender } = render(<Avatar fallback="A" size="sm" />);
-    expect(screen.getByText('A').parentElement).toHaveClass('h-8');
+    expect(screen.getByText('A').parentElement?.parentElement).toHaveClass('h-8');
 
     rerender(<Avatar fallback="A" size="xl" />);
-    expect(screen.getByText('A').parentElement).toHaveClass('h-14');
+    expect(screen.getByText('A').parentElement?.parentElement).toHaveClass('h-14');
   });
 
   it('applies shape classes', () => {
@@ -43,8 +43,7 @@ describe('Avatar', () => {
   });
 
   it('shows status indicator', () => {
-    render(<Avatar fallback="JF" status="online" />);
-    const statusIndicator = screen.getByText('JF').parentElement?.querySelector('span:last-child');
-    expect(statusIndicator).toHaveClass('bg-success');
+    const { container } = render(<Avatar fallback="JF" status="online" />);
+    expect(container.querySelector('span.bg-success')).toBeInTheDocument();
   });
 });
