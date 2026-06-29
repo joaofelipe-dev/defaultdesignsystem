@@ -29,7 +29,7 @@ export const Switch = React.forwardRef<HTMLInputElement, SwitchProps>(
         />
         <div
           className={cn(
-            "peer-focus:outline-none peer-focus:ring-4 rounded-full peer transition-colors peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-switch-thumb after:border-border after:rounded-full after:transition-all bg-switch",
+            "peer-focus:outline-none peer-focus:ring-2 rounded-full peer transition-colors peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-switch-thumb after:border-border after:rounded-full after:transition-all bg-switch",
             {
               'w-9 h-5 after:h-4 after:w-4': size === 'sm',
               'w-11 h-6 after:h-5 after:w-5': size === 'md',
