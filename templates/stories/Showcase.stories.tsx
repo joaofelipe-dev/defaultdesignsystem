@@ -231,6 +231,7 @@ function Gallery() {
                 React components styled with Tailwind CSS. Copied to your project via CLI.
                 Full ownership, zero vendor lock-in.
               </p>
+              <p className="text-xs text-muted-foreground/40">Design System by <strong className="text-muted-foreground/60 font-medium">João Felipe</strong></p>
               <div className="flex flex-wrap justify-center gap-2">
                 <Badge variant="soft" color="primary">React 19</Badge>
                 <Badge variant="soft" color="primary">Tailwind CSS</Badge>
