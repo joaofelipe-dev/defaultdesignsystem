@@ -237,7 +237,7 @@ function Gallery() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className="min-h-screen bg-background text-foreground overflow-x-hidden">
       {toasts.map((t) => (
         <Toast
           key={t.id}
@@ -334,7 +334,7 @@ function Gallery() {
           </div>
         </aside>
 
-        <main className="flex-1 lg:ml-56">
+        <main className="flex-1 lg:ml-56 min-w-0">
           <div className="max-w-5xl mx-auto px-4 sm:px-6 py-12 lg:py-16">
             <div className="text-center mb-16">
               <h1 className="text-4xl lg:text-5xl font-bold tracking-tight text-foreground mb-3">

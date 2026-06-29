@@ -30,7 +30,7 @@ export const Table = React.forwardRef<HTMLTableElement, TableProps>(
         <table
           ref={ref}
           className={cn(
-            'w-full caption-bottom text-sm',
+            'w-full caption-bottom text-sm table-fixed',
             {
               'border-collapse': variant === 'simple',
               '[&_tbody_tr:nth-child(even)]:bg-muted': variant === 'striped',
