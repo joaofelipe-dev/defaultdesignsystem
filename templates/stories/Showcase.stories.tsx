@@ -31,6 +31,10 @@ function useIntersection(threshold = 0.15) {
   const [visible, setVisible] = useState<Set<string>>(new Set());
   const observerRef = useRef<IntersectionObserver | null>(null);
 
+  useEffect(() => {
+    return () => observerRef.current?.disconnect();
+  }, []);
+
   const observe = useCallback((_id: string, el: HTMLElement | null) => {
     if (!el) return;
     if (!observerRef.current) {
@@ -102,11 +106,12 @@ const tableData = [
   { name: 'Carlos Lima', email: 'carlos@example.com', role: 'Viewer', status: 'Inactive' },
 ];
 
-function Section({ id, title, children, observe }: { id: string; title: string; children: React.ReactNode; observe: (id: string, el: HTMLElement | null) => void }) {
+function Section({ id, title, children, observe, visible }: { id: string; title: string; children: React.ReactNode; observe: (id: string, el: HTMLElement | null) => void; visible: boolean }) {
   return (
     <section
       id={id}
       ref={(el) => observe(id, el)}
+      data-visible={visible}
       className="scroll-mt-20 opacity-0 translate-y-4 transition-all duration-700 ease-out data-[visible=true]:opacity-100 data-[visible=true]:translate-y-0"
     >
       <div className="mb-8">
@@ -194,6 +199,7 @@ function Gallery() {
                 {cat.components.map((comp) => (
                   <button
                     key={comp}
+                    id={comp.toLowerCase()}
                     onClick={() => scrollTo(comp.toLowerCase())}
                     data-active={activeSection === comp.toLowerCase()}
                     className="block w-full text-left px-2 py-1 rounded text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors data-[active=true]:text-white data-[active=true]:bg-zinc-800 text-xs"
@@ -245,8 +251,8 @@ function Gallery() {
                 {cat.components.map((comp) => {
                   const id = comp.toLowerCase();
                   return (
-                    <div key={comp} id={id} data-visible={visible.has(id)}>
-                      <Section id={`${id}-content`} title={comp} observe={observe}>
+                    <div key={comp} id={id}>
+                      <Section id={`${id}-content`} title={comp} observe={observe} visible={visible.has(`${id}-content`)}>
                         {comp === 'Button' && <ButtonShowcase />}
                         {comp === 'Badge' && <BadgeShowcase />}
                         {comp === 'Input' && <InputShowcase />}
