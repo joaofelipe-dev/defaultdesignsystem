@@ -19,6 +19,7 @@ import { Divider } from '../ui/Divider';
 import { Avatar } from '../ui/Avatar';
 
 const CATEGORIES = [
+  { id: 'colors', label: 'Design Tokens', components: ['Color Palette'] },
   { id: 'actions', label: 'Actions', components: ['Button', 'Badge'] },
   {
     id: 'forms',
@@ -176,7 +177,7 @@ function Section({
   );
 }
 
-function Gallery() {
+export function Gallery() {
   const { dark, setDark } = useDarkMode();
   const [modalOpen, setModalOpen] = useState(false);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
@@ -186,6 +187,25 @@ function Gallery() {
   const [switchChecked, setSwitchChecked] = useState(false);
   const [checkboxChecked, setCheckboxChecked] = useState(false);
   const [radioValue, setRadioValue] = useState('option1');
+  const [themeOpen, setThemeOpen] = useState(false);
+  const [lightColors, setLightColors] = useState<Record<string, string>>({...CSS_LIGHT});
+  const [darkColors, setDarkColors] = useState<Record<string, string>>({...CSS_DARK});
+  const [primaryHex, setPrimaryHex] = useState('#3b82f6');
+
+  const applyTheme = useCallback((hex: string) => {
+    const hsl = hexToHsl(hex);
+    const fg = isLight(hex) ? '222.2 47.4% 11.2%' : '210 40% 98%';
+    const upd: Record<string, string> = { '--primary': hsl, '--primary-foreground': fg, '--ring': hsl };
+    setLightColors(prev => ({...prev, ...upd}));
+    setDarkColors(prev => ({...prev, ...upd}));
+    let style = document.getElementById('theme-override') as HTMLStyleElement;
+    if (!style) {
+      style = document.createElement('style');
+      style.id = 'theme-override';
+      document.head.appendChild(style);
+    }
+    style.textContent = `:root{--primary:${hsl};--primary-foreground:${fg};--ring:${hsl}}.dark{--primary:${hsl};--primary-foreground:${fg};--ring:${hsl}}`;
+  }, []);
 
   const addToast = (variant: 'success' | 'error' | 'warning' | 'info', message: string) => {
     setToasts((prev) => [...prev, { id: Date.now(), variant, message }]);
@@ -217,6 +237,17 @@ function Gallery() {
     window.addEventListener('keydown', handleKey);
     return () => window.removeEventListener('keydown', handleKey);
   }, []);
+
+  useEffect(() => {
+    if (!themeOpen) return;
+    const close = (e: MouseEvent) => {
+      if (!(e.target as HTMLElement).closest('#theme-menu') && !(e.target as HTMLElement).closest('.theme-btn')) setThemeOpen(false);
+    };
+    const esc = (e: KeyboardEvent) => { if (e.key === 'Escape') setThemeOpen(false); };
+    document.addEventListener('click', close);
+    document.addEventListener('keydown', esc);
+    return () => { document.removeEventListener('click', close); document.removeEventListener('keydown', esc); };
+  }, [themeOpen]);
 
   const [activeSection, setActiveSection] = useState('');
 
@@ -267,7 +298,7 @@ function Gallery() {
             <div className="flex items-center justify-between px-5 pt-6 pb-4 border-b border-zinc-800">
               <div>
                 <p className="text-sm font-semibold text-white tracking-tight">defaultDesignSystem</p>
-                <p className="text-xs text-zinc-500 mt-0.5">17 components</p>
+                <p className="text-xs text-zinc-500 mt-0.5">18 components</p>
               </div>
               <button onClick={() => setMobileNavOpen(false)} className="text-zinc-400 hover:text-white p-1">
                 <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
@@ -301,7 +332,7 @@ function Gallery() {
         <aside className="hidden lg:flex flex-col fixed left-0 top-0 h-full w-56 bg-zinc-950 text-zinc-300 z-30 border-r border-zinc-800">
           <div className="px-5 pt-6 pb-4 border-b border-zinc-800">
             <p className="text-sm font-semibold text-white tracking-tight">defaultDesignSystem</p>
-            <p className="text-xs text-zinc-500 mt-0.5">17 components</p>
+            <p className="text-xs text-zinc-500 mt-0.5">18 components</p>
           </div>
           <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-4 text-sm scrollbar-thin">
             {CATEGORIES.map((cat) => (
@@ -323,14 +354,52 @@ function Gallery() {
               </div>
             ))}
           </nav>
-          <div className="px-4 pb-4 pt-3 border-t border-zinc-800">
+          <div className="px-4 pb-4 pt-3 border-t border-zinc-800 relative">
             <button
-              onClick={() => setDark(!dark)}
-              className="flex items-center gap-2 text-xs text-zinc-500 hover:text-zinc-300 transition-colors w-full"
+              onClick={() => setThemeOpen(!themeOpen)}
+              className="theme-btn flex items-center gap-2 text-xs text-zinc-500 hover:text-zinc-300 transition-colors w-full"
             >
               <span className="text-base leading-none">{dark ? '\u2600' : '\uD83C\uDF19'}</span>
-              {dark ? 'Light mode' : 'Dark mode'}
+              Appearance
             </button>
+
+            {themeOpen && (
+              <div id="theme-menu" className="absolute bottom-full left-3 right-3 mb-2 p-3 rounded-lg bg-zinc-900 border border-zinc-700 shadow-xl z-50 space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-[11px] text-zinc-400">Appearance</span>
+                  <button
+                    onClick={() => { setDark(!dark); setThemeOpen(false); }}
+                    className="text-xs px-2 py-1 rounded bg-zinc-800 text-zinc-300 hover:bg-zinc-700 transition-colors"
+                  >
+                    {dark ? '☀️ Light' : '🌙 Dark'}
+                  </button>
+                </div>
+
+                <div className="border-t border-zinc-800 pt-2">
+                  <p className="text-[11px] text-zinc-400 mb-2">Accent Color</p>
+                  <div className="flex gap-1.5 flex-wrap mb-2">
+                    {Object.entries(THEME_PRESETS).map(([key, t]) => (
+                      <button
+                        key={key}
+                        onClick={() => { applyTheme(t.hex); setPrimaryHex(t.hex); }}
+                        className="w-5 h-5 rounded-full border border-zinc-700 ring-offset-1 ring-offset-zinc-900 hover:ring-2 hover:ring-zinc-500 transition-all"
+                        style={{ background: t.hex }}
+                        title={t.name}
+                      />
+                    ))}
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="color"
+                      value={primaryHex}
+                      onChange={(e) => { setPrimaryHex(e.target.value); applyTheme(e.target.value); }}
+                      className="w-7 h-5 rounded cursor-pointer border-0 p-0 bg-transparent"
+                    />
+                    <span className="text-[10px] text-zinc-500 font-mono">{primaryHex}</span>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </aside>
 
@@ -366,19 +435,59 @@ function Gallery() {
                   Accessible
                 </Badge>
                 <Badge variant="soft" color="primary">
-                  17 Components
+                  18 Components
                 </Badge>
               </div>
             </div>
 
-            {/* Dark mode FAB — mobile */}
+            {/* Theme FAB — mobile */}
             <button
-              onClick={() => setDark(!dark)}
-              className="lg:hidden fixed bottom-6 right-6 z-30 p-3 rounded-full bg-zinc-900 text-zinc-300 shadow-lg"
-              aria-label={dark ? 'Switch to light mode' : 'Switch to dark mode'}
+              onClick={() => setThemeOpen(!themeOpen)}
+              className="theme-btn lg:hidden fixed bottom-6 right-6 z-30 p-3 rounded-full bg-zinc-900 text-zinc-300 shadow-lg"
+              aria-label="Theme settings"
             >
               <span className="text-lg leading-none">{dark ? '\u2600' : '\uD83C\uDF19'}</span>
             </button>
+
+            {themeOpen && (
+              <div className="lg:hidden fixed inset-0 z-50 flex items-center justify-center">
+                <div className="absolute inset-0 bg-black/50" onClick={() => setThemeOpen(false)} />
+                <div id="theme-menu" className="relative bg-zinc-900 border border-zinc-700 rounded-lg p-4 w-72 shadow-xl space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[11px] text-zinc-400">Appearance</span>
+                    <button
+                      onClick={() => { setDark(!dark); setThemeOpen(false); }}
+                      className="text-xs px-2 py-1 rounded bg-zinc-800 text-zinc-300 hover:bg-zinc-700 transition-colors"
+                    >
+                      {dark ? '☀️ Light' : '🌙 Dark'}
+                    </button>
+                  </div>
+                  <div className="border-t border-zinc-800 pt-2">
+                    <p className="text-[11px] text-zinc-400 mb-2">Accent Color</p>
+                    <div className="flex gap-1.5 flex-wrap mb-2">
+                      {Object.entries(THEME_PRESETS).map(([key, t]) => (
+                        <button
+                          key={key}
+                          onClick={() => { applyTheme(t.hex); setPrimaryHex(t.hex); }}
+                          className="w-5 h-5 rounded-full border border-zinc-700 ring-offset-1 ring-offset-zinc-900 hover:ring-2 hover:ring-zinc-500 transition-all"
+                          style={{ background: t.hex }}
+                          title={t.name}
+                        />
+                      ))}
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="color"
+                        value={primaryHex}
+                        onChange={(e) => { setPrimaryHex(e.target.value); applyTheme(e.target.value); }}
+                        className="w-7 h-5 rounded cursor-pointer border-0 p-0 bg-transparent"
+                      />
+                      <span className="text-[10px] text-zinc-500 font-mono">{primaryHex}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
 
             {CATEGORIES.map((cat) => (
               <div key={cat.id} id={cat.id} className="mb-16">
@@ -392,6 +501,7 @@ function Gallery() {
                         observe={observe}
                         visible={visible.has(`${id}-content`)}
                       >
+                        {comp === 'Color Palette' && <ColorPalette colors={dark ? darkColors : lightColors} />}
                         {comp === 'Button' && <ButtonShowcase />}
                         {comp === 'Badge' && <BadgeShowcase />}
                         {comp === 'Input' && <InputShowcase />}
@@ -938,6 +1048,227 @@ function AvatarShowcase() {
       </div>
       <div className="mt-3">
         <CodeBlock code={`<Avatar fallback="JF" size="md" status="online" />`} />
+      </div>
+    </Card>
+  );
+}
+
+const CSS_VAR_GROUPS: { label: string; tokens: string[] }[] = [
+  {
+    label: 'Brand',
+    tokens: ['--primary', '--primary-foreground', '--secondary', '--secondary-foreground', '--accent', '--accent-foreground'],
+  },
+  {
+    label: 'Feedback',
+    tokens: ['--success', '--success-foreground', '--warning', '--warning-foreground', '--destructive', '--destructive-foreground'],
+  },
+  {
+    label: 'Base',
+    tokens: ['--background', '--foreground', '--card', '--card-foreground', '--popover', '--popover-foreground', '--muted', '--muted-foreground'],
+  },
+  {
+    label: 'Surface',
+    tokens: ['--surface', '--surface-foreground', '--surface-hover'],
+  },
+  {
+    label: 'Border & Ring',
+    tokens: ['--border', '--input', '--ring', '--ring-success', '--ring-warning'],
+  },
+  {
+    label: 'Tooltip',
+    tokens: ['--tooltip', '--tooltip-foreground', '--tooltip-light', '--tooltip-light-foreground', '--tooltip-light-border'],
+  },
+  {
+    label: 'Switch',
+    tokens: ['--switch-bg', '--switch-thumb'],
+  },
+  {
+    label: 'Shadows',
+    tokens: ['--shadow-sm', '--shadow-md', '--shadow-lg'],
+  },
+  {
+    label: 'Radius',
+    tokens: ['--radius'],
+  },
+];
+
+const CSS_LIGHT: Record<string, string> = {
+  '--background': '0 0% 100%',
+  '--foreground': '222.2 84% 4.9%',
+  '--card': '0 0% 100%',
+  '--card-foreground': '222.2 84% 4.9%',
+  '--popover': '0 0% 100%',
+  '--popover-foreground': '222.2 84% 4.9%',
+  '--primary': '221.2 83.2% 53.3%',
+  '--primary-foreground': '210 40% 98%',
+  '--secondary': '210 40% 96.1%',
+  '--secondary-foreground': '222.2 47.4% 11.2%',
+  '--muted': '210 40% 96.1%',
+  '--muted-foreground': '215.4 16.3% 46.9%',
+  '--accent': '210 40% 96.1%',
+  '--accent-foreground': '222.2 47.4% 11.2%',
+  '--destructive': '0 84.2% 60.2%',
+  '--destructive-foreground': '210 40% 98%',
+  '--success': '142.1 76.2% 36.3%',
+  '--success-foreground': '355.7 100% 97.3%',
+  '--warning': '38 92% 50%',
+  '--warning-foreground': '48 96% 89%',
+  '--border': '214.3 31.8% 91.4%',
+  '--input': '214.3 31.8% 91.4%',
+  '--ring': '221.2 83.2% 53.3%',
+  '--radius': '0.5rem',
+  '--surface': '0 0% 96.1%',
+  '--surface-foreground': '0 0% 45.1%',
+  '--surface-hover': '0 0% 90.2%',
+  '--tooltip': '0 0% 12.2%',
+  '--tooltip-foreground': '0 0% 100%',
+  '--tooltip-light': '0 0% 100%',
+  '--tooltip-light-foreground': '0 0% 12.2%',
+  '--tooltip-light-border': '0 0% 89.8%',
+  '--switch-bg': '0 0% 86.7%',
+  '--switch-thumb': '0 0% 100%',
+  '--ring-success': '142.1 76.2% 36.3%',
+  '--ring-warning': '38 92% 50%',
+  '--shadow-sm': '0 1px 2px 0 rgb(0 0 0 / 0.05)',
+  '--shadow-md': '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)',
+  '--shadow-lg': '0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)',
+};
+
+const CSS_DARK: Record<string, string> = {
+  '--background': '222.2 84% 4.9%',
+  '--foreground': '210 40% 98%',
+  '--card': '222.2 84% 4.9%',
+  '--card-foreground': '210 40% 98%',
+  '--popover': '222.2 84% 4.9%',
+  '--popover-foreground': '210 40% 98%',
+  '--primary': '217.2 91.2% 59.8%',
+  '--primary-foreground': '222.2 47.4% 11.2%',
+  '--secondary': '217.2 32.6% 17.5%',
+  '--secondary-foreground': '210 40% 98%',
+  '--muted': '217.2 32.6% 17.5%',
+  '--muted-foreground': '215 20.2% 65.1%',
+  '--accent': '217.2 32.6% 17.5%',
+  '--accent-foreground': '210 40% 98%',
+  '--destructive': '0 62.8% 30.6%',
+  '--destructive-foreground': '210 40% 98%',
+  '--success': '142.1 70.6% 45.3%',
+  '--success-foreground': '144.9 80.4% 10%',
+  '--warning': '48 96% 89%',
+  '--warning-foreground': '38 92% 50%',
+  '--border': '217.2 32.6% 17.5%',
+  '--input': '217.2 32.6% 17.5%',
+  '--ring': '224.3 76.3% 48%',
+  '--radius': '0.5rem',
+  '--surface': '216 28.3% 8.2%',
+  '--surface-foreground': '215 20.2% 65.1%',
+  '--surface-hover': '217.2 32.6% 13.5%',
+  '--tooltip': '0 0% 93%',
+  '--tooltip-foreground': '0 0% 12.2%',
+  '--tooltip-light': '222.2 84% 4.9%',
+  '--tooltip-light-foreground': '210 40% 98%',
+  '--tooltip-light-border': '217.2 32.6% 17.5%',
+  '--switch-bg': '217.2 32.6% 17.5%',
+  '--switch-thumb': '210 40% 98%',
+  '--ring-success': '142.1 70.6% 45.3%',
+  '--ring-warning': '48 96% 50%',
+  '--shadow-sm': '0 1px 2px 0 rgb(0 0 0 / 0.3)',
+  '--shadow-md': '0 4px 6px -1px rgb(0 0 0 / 0.4), 0 2px 4px -2px rgb(0 0 0 / 0.3)',
+  '--shadow-lg': '0 10px 15px -3px rgb(0 0 0 / 0.4), 0 4px 6px -4px rgb(0 0 0 / 0.3)',
+};
+
+function hexToHsl(hex: string): string {
+  const r = parseInt(hex.slice(1, 3), 16) / 255;
+  const g = parseInt(hex.slice(3, 5), 16) / 255;
+  const b = parseInt(hex.slice(5, 7), 16) / 255;
+  const max = Math.max(r, g, b), min = Math.min(r, g, b);
+  let h = 0, s, l = (max + min) / 2;
+  if (max !== min) {
+    const d = max - min;
+    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+    switch (max) {
+      case r: h = ((g - b) / d + (g < b ? 6 : 0)) / 6; break;
+      case g: h = ((b - r) / d + 2) / 6; break;
+      case b: h = ((r - g) / d + 4) / 6; break;
+    }
+  } else s = 0;
+  return `${Math.round(h * 360)} ${Math.round(s * 100)}% ${Math.round(l * 100)}%`;
+}
+
+function isLight(hex: string): boolean {
+  return (parseInt(hex.slice(1, 3), 16) * 299 + parseInt(hex.slice(3, 5), 16) * 587 + parseInt(hex.slice(5, 7), 16) * 114) / 1000 > 128;
+}
+
+const THEME_PRESETS: Record<string, { name: string; hex: string }> = {
+  blue: { name: 'Default Blue', hex: '#3b82f6' },
+  green: { name: 'Green', hex: '#22c55e' },
+  purple: { name: 'Purple', hex: '#a855f7' },
+  orange: { name: 'Orange', hex: '#f97316' },
+  rose: { name: 'Rose', hex: '#e11d48' },
+};
+
+function ColorSwatch({ token, value }: { token: string; value: string }) {
+  if (token === '--radius') {
+    return (
+      <div className="flex items-center gap-3">
+        <div className="w-8 h-8 shrink-0 bg-muted border border-border" style={{ borderRadius: value }} />
+        <div className="min-w-0">
+          <p className="text-xs font-mono text-foreground truncate">{token}</p>
+          <p className="text-[11px] text-muted-foreground font-mono truncate">{value}</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (token.startsWith('--shadow-')) {
+    return (
+      <div className="flex items-center gap-3">
+        <div className="w-8 h-8 shrink-0 rounded bg-background border border-border" style={{ boxShadow: value }} />
+        <div className="min-w-0">
+          <p className="text-xs font-mono text-foreground truncate">{token}</p>
+          <p className="text-[11px] text-muted-foreground font-mono truncate">{value}</p>
+        </div>
+      </div>
+    );
+  }
+
+  const isColor = /^[\d.]+(\s+[\d.]+%){2}$/.test(value);
+  return (
+    <div className="flex items-center gap-3">
+      <span
+        className="w-8 h-8 shrink-0 rounded-full border border-border"
+        style={{ background: isColor ? `hsl(${value})` : value }}
+      />
+      <div className="min-w-0">
+        <p className="text-xs font-mono text-foreground truncate">{token}</p>
+        <p className="text-[11px] text-muted-foreground font-mono truncate">
+          {isColor ? `hsl(${value})` : value}
+        </p>
+      </div>
+    </div>
+  );
+}
+
+function ColorPalette({ colors }: { colors: Record<string, string> }) {
+  return (
+    <Card variant="outlined" padding="md">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {CSS_VAR_GROUPS.map((group) => (
+          <div key={group.label}>
+            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
+              {group.label}
+            </p>
+            <div className="space-y-2">
+              {group.tokens.map((token) => (
+                <ColorSwatch key={token} token={token} value={colors[token] || ''} />
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+      <div className="mt-6">
+        <CodeBlock
+          code={'/* All colors are CSS variables in globals.css */\n/* Change HSL values to customize your theme */'}
+        />
       </div>
     </Card>
   );
