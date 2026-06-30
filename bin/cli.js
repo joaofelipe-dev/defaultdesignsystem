@@ -177,36 +177,64 @@ program
         console.log(kleur.green(`✔ Utilitario src/components/utils/cn.ts adicionado.`));
       }
 
-      // Copy globals.css (v3 or v4)
+      // ----------------------------------------------------------------
+      // STEP 1: globals.css — só Tailwind directives (@tailwind / @import)
+      // Só cria se não existir (Next.js já gera o próprio)
+      // ----------------------------------------------------------------
+      const stylesDir = isNext ? 'src/app' : 'src/styles';
       const cssSourceName = isTailwindV4 ? 'globals-v4.css' : 'globals.css';
       const cssSource = path.join(TEMPLATES_DIR, 'styles', cssSourceName);
       const cssTarget = path.join(targetStylesDir, 'globals.css');
       if (!(await fs.pathExists(cssTarget))) {
         await fs.copy(cssSource, cssTarget);
-        console.log(kleur.green(`✔ Tema base ${isNext ? 'src/app' : 'src/styles'}/globals.css adicionado.`));
-      } else if (isTailwindV4) {
-        console.log(kleur.yellow(`⚠ globals.css ja existe. Certifique-se de que o arquivo theme-${theme}.css seja importado APOS globals.css para que as cores customizadas funcionem no Tailwind v4.`));
+        console.log('');
+        console.log(kleur.green(`✔ ${stylesDir}/globals.css criado com as diretivas do Tailwind.`));
+      } else {
+        console.log('');
+        console.log(kleur.cyan(`ℹ ${stylesDir}/globals.css ja existe — mantivemos o seu arquivo.`));
       }
 
-      // Copy theme preset
+      // ----------------------------------------------------------------
+      // STEP 2: design-tokens.css — CSS custom properties (:root / .dark)
+      // Nome único → nunca conflita, sempre é copiado
+      // ----------------------------------------------------------------
+      const tokensSourceName = isTailwindV4 ? 'design-tokens-v4.css' : 'design-tokens.css';
+      const tokensSource = path.join(TEMPLATES_DIR, 'styles', tokensSourceName);
+      const tokensTarget = path.join(targetStylesDir, 'design-tokens.css');
+      if (!(await fs.pathExists(tokensTarget))) {
+        await fs.copy(tokensSource, tokensTarget);
+        console.log(kleur.green(`✔ ${stylesDir}/design-tokens.css criado com as varaveis de cor.`));
+      } else {
+        console.log(kleur.yellow(`ℹ ${stylesDir}/design-tokens.css ja existe — mantivemos o existente.`));
+      }
+
+      // ----------------------------------------------------------------
+      // STEP 3: theme-{name}.css — @theme block do tema escolhido (Tailwind v4)
+      // Sempre é copiado
+      // ----------------------------------------------------------------
       const themeSource = path.join(TEMPLATES_DIR, 'styles/themes', `${theme}.css`);
-      const themeFilename = isNext ? `theme-${theme}.css` : `theme-${theme}.css`;
+      const themeFilename = `theme-${theme}.css`;
       const themeTarget = path.join(targetStylesDir, themeFilename);
       await fs.copy(themeSource, themeTarget);
-      console.log(kleur.green(`✔ Tema "${theme}" adicionado em ${isNext ? 'src/app' : 'src/styles'}/theme-${theme}.css.`));
+      console.log(kleur.green(`✔ ${stylesDir}/theme-${theme}.css criado com o tema "${theme}".`));
 
-      // Copy tailwind-preset.cjs (v3 only)
+      // ----------------------------------------------------------------
+      // STEP 4: tailwind-preset.cjs (Tailwind v3)
+      // ----------------------------------------------------------------
       if (!isTailwindV4) {
         const presetSource = path.join(TEMPLATES_DIR, 'tailwind-preset.js');
         const presetTarget = path.join(process.cwd(), 'tailwind-preset.cjs');
         if (!(await fs.pathExists(presetTarget))) {
           await fs.copy(presetSource, presetTarget);
-          console.log(kleur.green(`✔ Preset Tailwind tailwind-preset.cjs adicionado.`));
+          console.log(kleur.green(`✔ tailwind-preset.cjs adicionado na raiz.`));
         }
       }
 
-      console.log(kleur.green(`✔ Diretorios e utilitarios criados com sucesso!`));
-      console.log(kleur.cyan(`Instalando dependencias necessarias (clsx, tailwind-merge)...`));
+      // ----------------------------------------------------------------
+      // STEP 5: Instalar dependencias
+      // ----------------------------------------------------------------
+      console.log('');
+      console.log(kleur.cyan('Instalando dependencias (clsx, tailwind-merge)...'));
 
       try {
         execSync('npm install clsx tailwind-merge', { stdio: 'inherit' });
@@ -218,28 +246,114 @@ program
         console.log(kleur.cyan(`Por favor, execute manualmente: npm install clsx tailwind-merge`));
       }
 
-      // Print import instructions
-      console.log('');
+      // ----------------------------------------------------------------
+      // STEP 6: Auto-import ou instrucoes manuais
+      // ----------------------------------------------------------------
       const relativePath = isNext ? '' : 'styles/';
-      if (isNext) {
-        console.log(kleur.cyan('> Importe os estilos em src/app/layout.tsx:'));
-      } else {
-        console.log(kleur.cyan('> Importe os estilos em src/main.tsx:'));
+      const entryName = isNext ? 'layout.tsx' : 'main.tsx';
+      const entryPath = path.join(process.cwd(), isNext ? 'src/app' : 'src', entryName);
+      let autoImport = false;
+
+      if (fs.existsSync(entryPath)) {
+        console.log('');
+        const answer = await prompts({
+          type: 'confirm',
+          name: 'value',
+          message: `Adicionar os imports automaticamente no ${isNext ? 'src/app' : 'src'}/${entryName}?`,
+          initial: true,
+        });
+        autoImport = answer.value;
+
+        if (autoImport) {
+          let content = fs.readFileSync(entryPath, 'utf-8');
+          let lines = content.split('\n');
+
+          // Build list of new imports (skip if already exist)
+          const toAdd = [];
+          const tkPath = `./${relativePath}design-tokens.css`;
+          const thPath = `./${relativePath}theme-${theme}.css`;
+          const glPath = `./${relativePath}globals.css`;
+
+          if (!content.includes(tkPath)) toAdd.push(`import "${tkPath}"`);
+          if (!content.includes(thPath)) toAdd.push(`import "${thPath}"`);
+          const hasGlobals = lines.some(l => /^import\s+["'].*globals\.css["']/.test(l.trim()));
+          if (!hasGlobals && !content.includes(glPath)) toAdd.push(`import "${glPath}"`);
+
+          if (toAdd.length === 0) {
+            console.log(kleur.yellow(`ℹ Os imports ja existem em ${entryName}. Nada a fazer.`));
+          } else {
+            // Insert before existing globals.css import, or after last import
+            let globalsIdx = -1;
+            for (let i = 0; i < lines.length; i++) {
+              if (/^import\s+["'].*globals\.css["']/.test(lines[i].trim())) {
+                globalsIdx = i;
+                break;
+              }
+            }
+
+            if (globalsIdx >= 0) {
+              lines.splice(globalsIdx, 0, ...toAdd, '');
+            } else {
+              let lastImport = -1;
+              for (let i = 0; i < lines.length; i++) {
+                if (/^import\s+/.test(lines[i].trim())) lastImport = i;
+              }
+              if (lastImport >= 0) {
+                lines.splice(lastImport + 1, 0, '', ...toAdd);
+              } else {
+                lines.unshift(...toAdd, '');
+              }
+            }
+
+            fs.writeFileSync(entryPath, lines.join('\n'), 'utf-8');
+            console.log(kleur.green(`✔ ${toAdd.length} import(s) adicionado(s) em ${isNext ? 'src/app' : 'src'}/${entryName}:`));
+            toAdd.forEach(l => console.log(kleur.white(`   ${l}`)));
+          }
+        }
       }
-      console.log(kleur.white(`   import "./${relativePath}globals.css"`));
-      console.log(kleur.white(`   import "./${relativePath}theme-${theme}.css"`));
+
+      // ----------------------------------------------------------------
+      // STEP 7: Instrucoes finais (se nao fez auto-import)
+      // ----------------------------------------------------------------
+      if (!autoImport) {
+        console.log('');
+        console.log(kleur.bold().white('═══════════════════════════════════════════════════'));
+        console.log(kleur.bold().white('   IMPORTE OS ESTILOS NO SEU PROJETO'));
+        console.log(kleur.bold().white('═══════════════════════════════════════════════════'));
+        console.log('');
+
+        if (isNext) {
+          console.log(kleur.cyan('> Em src/app/layout.tsx, adicione:'));
+        } else {
+          console.log(kleur.cyan('> Em src/main.tsx, adicione:'));
+        }
+
+        console.log('');
+        console.log(kleur.white(`   import "./${relativePath}design-tokens.css"`));
+        console.log(kleur.white(`   import "./${relativePath}theme-${theme}.css"`));
+
+        if (await fs.pathExists(cssTarget)) {
+          console.log(kleur.white(`   import "./${relativePath}globals.css"`));
+          console.log('');
+          console.log(kleur.dim('   (ordem: design-tokens → theme → globals)'));
+        }
+
+        console.log('');
+        console.log(kleur.bold().white('═══════════════════════════════════════════════════'));
+      }
 
       if (!isTailwindV4) {
         console.log('');
-        console.log(kleur.cyan('> Crie tailwind.config.cjs na raiz:'));
-        console.log(kleur.white('   const preset = require("./tailwind-preset.cjs");'));
-        console.log(kleur.white('   module.exports = { presets: [preset], content: ["./index.html", "./src/**/*.{ts,tsx}"] };'));
+        console.log(kleur.cyan('> Configure o Tailwind v3 na raiz do projeto:'));
+        console.log(kleur.white('   tailwind.config.cjs:'));
+        console.log(kleur.white('     const preset = require("./tailwind-preset.cjs");'));
+        console.log(kleur.white('     module.exports = { presets: [preset], content: ["./index.html", "./src/**/*.{ts,tsx}"] };'));
         console.log('');
-        console.log(kleur.cyan('> Crie postcss.config.cjs na raiz:'));
-        console.log(kleur.white('   module.exports = { plugins: { tailwindcss: {}, autoprefixer: {} } };'));
+        console.log(kleur.white('   postcss.config.cjs:'));
+        console.log(kleur.white('     module.exports = { plugins: { tailwindcss: {}, autoprefixer: {} } };'));
       } else {
         console.log('');
-        console.log(kleur.green('> Tailwind v4 detectado! Nenhuma config extra necessaria.'));
+        console.log(kleur.green('> Tailwind v4 detectado! Nenhuma config extra de PostCSS necessaria.'));
       }
     } catch (err) {
       console.error(kleur.red('Erro na inicializacao:'), err);
